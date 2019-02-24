@@ -1,0 +1,107 @@
+<!-- INCLUDE mcp_header.html -->
+<h2>{{ lang('MCP_RPGSTATS') }}{% if U_HAS_GET %} for user {{ U_NAME }}{% endif %}</h2>
+{% if not U_POSTED %}
+<form id="rpgstats_mcp_select_user" method="post" action="{{ U_POST_ACTION }}">
+	<div class="panel">
+		<div class="inner">
+			<fieldset>
+				<dl>
+					<dt><label for="targetUser">{L_SELECT_USER}{L_COLON}</label>[<a href="{{ U_FIND_USERNAME }}" onclick="find_username(this.href); return false;">{{ lang('RPGSTATS_FIND_USER') }}</a>]</dt>
+					<dd><input name="targetUser" id="targetUser" type="text" class="inputbox" /></dd>
+				</dl>
+			</fieldset>
+		</div>
+	</div>
+
+	<fieldset class="submit-buttons">
+		<input type="reset" value="{L_RESET}" name="reset" class="button2" />&nbsp;
+		<input type="submit" name="submituser" value="{L_SUBMIT}" class="button1" />
+		{S_FORM_TOKEN}
+	</fieldset>
+</form>
+{% endif %}
+{% if U_POSTED or U_HAS_GET %}
+<style>
+fieldset{
+	display: block;
+    margin-inline-start: 2px;
+    margin-inline-end: 2px;
+    padding-block-start: 0.35em;
+    padding-inline-start: 0.75em;
+    padding-inline-end: 0.75em;
+    padding-block-end: 0.625em;
+    min-inline-size: min-content;
+    border-width: 2px;
+    border-style: groove;
+    border-color: threedface;
+    border-image: initial;
+}
+.grid-container{
+	display: grid;
+	grid-column-gap: 5px;
+	grid-template-columns: auto auto auto;
+}
+@media screen and (max-width: 1280px) {
+  .grid-container {
+	grid-column-gap: 5px;
+    grid-template-columns: auto auto;
+  }
+}
+@media screen and (max-width: 950px) {
+  .grid-container {
+	grid-column-gap: 0px;
+    grid-template-columns: auto;
+  }
+}
+</style>
+<div class="panel">
+	<div class="inner">
+		<div class="grid-container">
+		{% for rpgstats in loops.rpgstats %}
+			{% if not U_ACP and not rpgstats.STAT_SECRET == 1 %}
+			<div class="grid-item">
+				<form id="rpgstats_mcp_update_stats" method="post" action="{{ U_ACTION }}">
+				<fieldset>
+					<legend>{{ rpgstats.STAT_NAME }}</legend>
+					<dl>
+						<input type="hidden" value="{{ rpgstats.STAT_ID }}" name="statId" />
+						<input type="hidden" value="{{ U_ID }}" name="userId" />
+						<input type="hidden" value="{{ U_NAME }}" name="userName" />
+						<input type="hidden" value="{{ rpgstats.STAT_NAME }}" name="statName" />
+						
+						<dt><label for="{{ rpgstats.STAT_ID }}">{{ lang('RPGSTATS_VALUE') }}</label></dt>
+						<dd><input type="text" value="{{ rpgstats.STAT_VALUE }}" name="newStatValue" /></dd>
+						
+						<input class="button1" type="submit" id="updateStat" name="updateStat" value="{{ lang('RPGSTATS_UPDATE_STAT') }}" />
+						{{ S_FORM_TOKEN }}
+					</dl>
+				</fieldset>
+				</form>
+			</div>
+			{% elseif U_ACP %}
+			<div class="grid-item">
+				<form id="rpgstats_mcp_update_stats" method="post" action="{{ U_ACTION }}">
+				<fieldset>
+					<legend>{{ rpgstats.STAT_NAME }}</legend>
+					<dl>
+						<input type="hidden" value="{{ rpgstats.STAT_ID }}" name="statId" />
+						<input type="hidden" value="{{ U_ID }}" name="userId" />
+						<input type="hidden" value="{{ U_NAME }}" name="userName" />
+						<input type="hidden" value="{{ rpgstats.STAT_NAME }}" name="statName" />
+						
+						<dt><label for="{{ rpgstats.STAT_ID }}">{{ lang('RPGSTATS_VALUE') }}</label></dt>
+						<dd><input type="text" value="{{ rpgstats.STAT_VALUE }}" name="newStatValue" /></dd>
+						
+						<input class="button1" type="submit" id="updateStat" name="updateStat" value="{{ lang('RPGSTATS_UPDATE_STAT') }}" />
+						{{ S_FORM_TOKEN }}
+					</dl>
+				</fieldset>
+				</form>
+			</div>
+			{% endif %}
+		{% endfor %}
+		</div>
+	</div>
+</div>
+{% endif %}
+<!-- INCLUDE mcp_footer.html -->

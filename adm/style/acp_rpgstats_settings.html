@@ -1,0 +1,69 @@
+{% include 'overall_header.html' %}
+
+<h1>{{ lang('RPGSTATS_TITLE') }}</h1>
+<fieldset>
+	<legend>{{ lang('RPGSTATS_SETTINGS') }}</legend>
+	<form id="rpgstats_settings" method="post" action="{{ U_ACTION }}">
+		<dl>
+			<dt>{{ lang('RPGSTATS_ADMIN_OVERRIDE') }}</dt>
+			<dd>
+				<label for="adminOverride"><input type="radio" name="adminOverride" value="0" {% if U_ADMIN_VISIBILITY_ENABLED == 0 %}checked{% endif %} /> {{ lang('RPGSTATS_DISABLED') }}</label>
+				<label for="adminOverride"><input type="radio" name="adminOverride" value="1" {% if U_ADMIN_VISIBILITY_ENABLED == 1 %}checked{% endif %} /> {{ lang('RPGSTATS_ENABLED') }}</label>
+			</dd>
+		</dl>
+		<dl>
+			<dt>{{ lang('RPGSTATS_ADMIN_VISIBILITY') }}</dt>
+			<dd>
+				<select name="adminVisibility">
+					<option value="0" {% if U_ADMIN_VISIBILITY_LEVEL == 0 %}selected{% endif %}>{{ lang('RPGSTATS_DISPLAY_HIDDEN') }}</option>
+					<option value="1" {% if U_ADMIN_VISIBILITY_LEVEL == 1 %}selected{% endif %}>{{ lang('RPGSTATS_DISPLAY_PROFILE') }}</option>
+					<option value="2" {% if U_ADMIN_VISIBILITY_LEVEL == 2 %}selected{% endif %}>{{ lang('RPGSTATS_DISPLAY_AVATAR') }}</option>
+					<option value="3" {% if U_ADMIN_VISIBILITY_LEVEL == 3 %}selected{% endif %}>{{ lang('RPGSTATS_DISPLAY_BOTH') }}</option>
+					<option value="4" {% if U_ADMIN_VISIBILITY_LEVEL == 4 %}selected{% endif %}>{{ lang('RPGSTATS_DISPLAY_ORIGINAL') }}</option>
+				</select>
+			</dd>
+		</dl>
+		<dl>
+			<dt>{{ lang('RPGSTATS_USER_DECREASE') }}</dt>
+			<dd>
+				<label for="userDecrease"><input type="radio" name="userDecrease" value="0" {% if U_USER_DECREASE_ENABLED == 0 %}checked{% endif %} /> {{ lang('RPGSTATS_DISABLED') }}</label>
+				<label for="userDecrease"><input type="radio" name="userDecrease" value="1" {% if U_USER_DECREASE_ENABLED == 1 %}checked{% endif %} /> {{ lang('RPGSTATS_ENABLED') }}</label>
+			</dd>
+		</dl>
+		<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('RPGSTATS_SUBMIT') }}" />
+		{{ S_FORM_TOKEN }}
+	</form>
+</fieldset>
+<hr/>
+<fieldset>
+	<legend>{{ lang('RPGSTATS_REALLOCATION_TITLE') }}</legend>
+	<div style="width:calc(50% - 20px);float:left;">
+		<fieldset>
+			<legend>{{ lang('RPGSTATS_GREALLOCATION_TITLE') }}</legend>
+			<form id="rpgstats_greall" method="post" action="{{ U_ACTION }}">
+				<dl>
+					<dt>{{ lang('RPGSTATS_GREALLOCATION_EXPLAIN') }}</dt>
+					<dd><input class="button1" type="submit" id="globalReallocation" name="globalReallocation" value="{{ lang('RPGSTATS_REALLOCATION_SUBMIT') }}" /></dd>
+				</dl>
+				{{ S_FORM_TOKEN }}
+			</form>
+		</fieldset>
+	</div>
+	<div style="width:calc(50% - 20px);float:right;">
+		<fieldset>
+			<legend>{{ lang('RPGSTATS_SREALLOCATION_TITLE') }}</legend>
+			<form id="rpgstats_sreall" method="post" action="{{ U_ACTION }}">
+				<dl>
+					<dt>
+						<input type="text" id="username" name="username" /><br/>
+						[ <a href="{{ U_FIND_USER_URI }}" onclick="find_username(this.href); return false;">{{ lang('RPGSTATS_FIND_USER') }}</a> ]
+					</dt>
+					<dd><input class="button1" type="submit" id="singleReallocation" name="singleReallocation" value="{{ lang('RPGSTATS_REALLOCATION_SUBMIT') }}" /></dd>
+				</dl>
+				{{ S_FORM_TOKEN }}
+			</form>
+		</fieldset>
+	</div>
+</fieldset>
+
+{% include 'overall_footer.html' %}

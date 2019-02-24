@@ -1,0 +1,236 @@
+<!-- INCLUDE ucp_header.html -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<style>
+fieldset{
+	display: block;
+    margin-inline-start: 2px;
+    margin-inline-end: 2px;
+    padding-block-start: 0.35em;
+    padding-inline-start: 0.75em;
+    padding-inline-end: 0.75em;
+    padding-block-end: 0.625em;
+    min-inline-size: min-content;
+    border-width: 2px;
+    border-style: groove;
+    border-color: threedface;
+    border-image: initial;
+}
+dd input, dd select{
+	width:100%;
+}
+.grid-container{
+	display: grid;
+	grid-column-gap: 5px;
+	grid-template-columns: auto auto auto;
+}
+.full-width{
+	grid-column-start: 1;
+	grid-column-end: 4;
+}
+.unallocated{
+	grid-column-start: 1;
+	grid-column-end: 3;
+}
+.plusOne, .plusTen, .plusHundred, .minusOne, .minusTen, .minusHundred {
+	border-radius: 2px;
+	background-color: #e7e7e7;
+	color: black;
+	border: e7e7e7 2px solid;
+	-webkit-transition-duration: 0.4s; /* Safari */
+	transition-duration: 0.4s;
+	padding: 3px;
+	margin: 0 2px;
+} 
+.plusOne:hover, .plusTen:hover, .plusHundred:hover, .minusOne:hover, .minusTen:hover, .minusHundred:hover {
+	background-color: white;
+} 
+@media screen and (max-width: 1280px) {
+	.grid-container {
+		grid-column-gap: 5px;
+		grid-template-columns: auto auto;
+	}
+	.full-width{
+		grid-column-start: 1;
+		grid-column-end: 3;
+	}
+	.unallocated{
+		grid-column-start: 1;
+		grid-column-end: 2;
+	}
+}
+@media screen and (max-width: 950px) {
+	.grid-container {
+		grid-column-gap: 0px;
+		grid-template-columns: auto;
+	}
+	.full-width{
+		grid-column-start: 1;
+		grid-column-end: 2;
+	}
+}
+</style>
+<div class="panel">
+	<div class="inner">
+		<form id="rpgstats_ucp_update_stats" method="post" action="{{ U_ACTION }}">
+			<div class="grid-container">
+				{% for rpgstats in loops.rpgstats %}
+					{% if not U_ACP and not rpgstats.STAT_SECRET == 1 %}
+						<div class="grid-item {% if rpgstats.STAT_ID == 1 %}unallocated{% endif %}" {% if rpgstats.STAT_ID == 2 %}style="display:none;"{% endif %}>
+							<fieldset>
+								<legend>{{ rpgstats.STAT_NAME }}</legend>
+								<dl>
+									<input type="hidden" value="{{ rpgstats.STAT_ID }}" name="{{ rpgstats.STAT_ID }}_statId" />
+									<input type="hidden" value="{{ rpgstats.STAT_NAME }}" name="{{ rpgstats.STAT_ID }}_statName" />
+									<dt>{% if rpgstats.STAT_ID == 1 %}{{ lang('RPGSTATS_POINTS_REMAINING') }}{{ lang('COLON') }}{% else %}{{ lang('RPGSTATS_VALUE') }}{% endif %}</dt>
+									<dd class="statValueContainer" style="text-align:center;">
+										<span class="{{ rpgstats.STAT_ID }}_statValue">{{ rpgstats.STAT_VALUE }}</span>
+										<input type="hidden" value="{{ rpgstats.STAT_VALUE }}" name="{{ rpgstats.STAT_ID }}_statValue" />
+									</dd>
+									<dt>{{ lang('RPGSTATS_DISPLAY') }}</dt>
+									<dd>
+										<select name="{{ rpgstats.STAT_ID }}_statDisplay" class="setDisplay">
+											<option value="0" {% if rpgstats.STAT_DISPLAY == 0 %}selected{% endif %}>{{ lang('RPGSTATS_DISPLAY_HIDDEN') }}</option>
+											<option value="1" {% if rpgstats.STAT_DISPLAY == 1 %}selected{% endif %}>{{ lang('RPGSTATS_DISPLAY_PROFILE') }}</option>
+											<option value="2" {% if rpgstats.STAT_DISPLAY == 2 %}selected{% endif %}>{{ lang('RPGSTATS_DISPLAY_AVATAR') }}</option>
+											<option value="3" {% if rpgstats.STAT_DISPLAY == 3 %}selected{% endif %}>{{ lang('RPGSTATS_DISPLAY_BOTH') }}</option>
+										</select>
+									</dd>
+								</dl>
+							</fieldset>
+						</div>
+					{% elseif U_ACP %}
+						<div class="grid-item {% if rpgstats.STAT_ID == 1 %}unallocated{% endif %}" {% if rpgstats.STAT_ID == 2 %}style="display:none;"{% endif %}>
+							<fieldset>
+								<legend>{{ rpgstats.STAT_NAME }}</legend>
+								<dl>
+									<input type="hidden" value="{{ rpgstats.STAT_ID }}" name="{{ rpgstats.STAT_ID }}_statId" />
+									<input type="hidden" value="{{ rpgstats.STAT_NAME }}" name="{{ rpgstats.STAT_ID }}_statName" />
+									<dt>{% if rpgstats.STAT_ID == 1 %}{{ lang('RPGSTATS_POINTS_REMAINING') }}{{ lang('COLON') }}{% else %}{{ lang('RPGSTATS_VALUE') }}{% endif %}</dt>
+									<dd class="statValueContainer" style="text-align:center;">
+										<span class="{{ rpgstats.STAT_ID }}_statValue">{{ rpgstats.STAT_VALUE }}</span>
+										<input type="hidden" value="{{ rpgstats.STAT_VALUE }}" name="{{ rpgstats.STAT_ID }}_statValue" />
+									</dd>
+									<dt>{{ lang('RPGSTATS_DISPLAY') }}</dt>
+									<dd>
+										<select name="{{ rpgstats.STAT_ID }}_statDisplay" class="setDisplay">
+											<option value="0" {% if rpgstats.STAT_DISPLAY == 0 %}selected{% endif %}>{{ lang('RPGSTATS_DISPLAY_HIDDEN') }}</option>
+											<option value="1" {% if rpgstats.STAT_DISPLAY == 1 %}selected{% endif %}>{{ lang('RPGSTATS_DISPLAY_PROFILE') }}</option>
+											<option value="2" {% if rpgstats.STAT_DISPLAY == 2 %}selected{% endif %}>{{ lang('RPGSTATS_DISPLAY_AVATAR') }}</option>
+											<option value="3" {% if rpgstats.STAT_DISPLAY == 3 %}selected{% endif %}>{{ lang('RPGSTATS_DISPLAY_BOTH') }}</option>
+										</select>
+									</dd>
+								</dl>
+							</fieldset>
+						</div>
+					{% endif %}
+				{% endfor %}
+				<input class="button1 full-width" type="submit" id="updateStats" name="updateStats" value="{{ lang('RPGSTATS_UPDATE_STAT') }}" />
+				{% for rpgstats in loops.rpgstats %}
+					{% if rpgstats.STAT_ID == 2 and rpgstats.STAT_VALUE > 0 %}
+						<input class="button1 full-width" type="submit" id="doReallocation" name="doReallocation" value="{{ lang('RPGSTATS_REALLOCATE') }}{{ lang('COLON') }} {{ rpgstats.STAT_VALUE }}" />
+					{% endif %}
+				{% endfor %}
+			</div>
+			{{ S_FORM_TOKEN }}
+		</form>
+	</div>
+</div>
+<script>
+$(document).ready(function(){
+	var plusOneButton		= "<button class='plusOne' value='1'>+1</button>";
+	var plusTenButton		= "<button class='plusTen' value='10'>+10</button>";
+	var plusHundredButton	= "<button class='plusHundred' value='100'>+100</button>";
+	var minusOneButton		= "<button class='minusOne' value='1'>-1</button>";
+	var minusTenButton		= "<button class='minusTen' value='10'>-10</button>";
+	var minusHundredButton	= "<button class='minusHundred' value='100'>-100</button>";
+	var i = 4;
+	while (i <= {{ NUMBER_OF_STATS }}) {
+		var targetClass			= '.'+i+'_statValue';
+		var unallocatedPoints	= parseInt($('span.1_statValue').siblings('input[type=hidden]').val(),10);
+		var canDecrease			= {{ CAN_DECREASE }};
+		$(targetClass).each(function(index){
+			var statValue		= parseInt($(this).text(),10);
+			if(statValue > 0 && canDecrease == true){
+				$(this).parent().prepend(minusOneButton);
+			}
+			if(statValue > 9 && canDecrease == true){
+				$(this).parent().prepend(minusTenButton);
+			}
+			if(statValue > 99 && canDecrease == true){
+				$(this).parent().prepend(minusHundredButton);
+			}
+			if(unallocatedPoints > 0){
+				$(this).parent().append(plusOneButton);
+			}
+			if(unallocatedPoints > 9){
+				$(this).parent().append(plusTenButton);
+			}
+			if(unallocatedPoints > 99){
+				$(this).parent().append(plusHundredButton);
+			}
+		});
+		i++;
+	}
+	$('.statValueContainer').on('click','button',function(){
+		event.preventDefault();
+		var unallocatedPoints = $('span.1_statValue');
+		var unallocatedPointsValue = parseInt(unallocatedPoints.siblings('input[type=hidden]').val(),10);
+		var hiddenInput = $(this).siblings('input[type=hidden]');
+		var visiblePoints = $(this).siblings('span');
+		var statValue = parseInt(hiddenInput.val(),10);
+		switch($(this).attr('class')){
+			case 'plusOne':
+				if(unallocatedPointsValue > 0){
+					hiddenInput.val(statValue+1);
+					unallocatedPoints.siblings('input[type=hidden]').val(unallocatedPointsValue-1);
+					visiblePoints.text(statValue+1);
+					unallocatedPoints.text(unallocatedPointsValue-1);
+				}
+				break;
+			case 'plusTen':
+				if(unallocatedPointsValue >= 10){
+					hiddenInput.val(statValue+10);
+					unallocatedPoints.siblings('input[type=hidden]').val(unallocatedPointsValue-10);
+					visiblePoints.text(statValue+10);
+					unallocatedPoints.text(unallocatedPointsValue-10);
+				}
+				break;
+			case 'plusHundred':
+				if(unallocatedPointsValue >= 100){
+					hiddenInput.val(statValue+100);
+					unallocatedPoints.siblings('input[type=hidden]').val(unallocatedPointsValue-100);
+					visiblePoints.text(statValue+100);
+					unallocatedPoints.text(unallocatedPointsValue-100);
+				}
+				break;
+			case 'minusOne':
+				if(statValue > 0){
+					hiddenInput.val(statValue-1);
+					unallocatedPoints.siblings('input[type=hidden]').val(unallocatedPointsValue+1);
+					visiblePoints.text(statValue-1);
+					unallocatedPoints.text(unallocatedPointsValue+1);
+				}
+				break;
+			case 'minusTen':
+				if(statValue >= 10){
+					hiddenInput.val(statValue-10);
+					unallocatedPoints.siblings('input[type=hidden]').val(unallocatedPointsValue+10);
+					visiblePoints.text(statValue-10);
+					unallocatedPoints.text(unallocatedPointsValue+10);
+				}
+				break;
+			case 'minusHundred':
+				if(statValue >= 100){
+					hiddenInput.val(statValue-100);
+					unallocatedPoints.siblings('input[type=hidden]').val(unallocatedPointsValue+100);
+					visiblePoints.text(statValue-100);
+					unallocatedPoints.text(unallocatedPointsValue+100);
+				}
+				break;
+		}
+	});
+});
+
+</script>
+
+<!-- INCLUDE ucp_footer.html -->

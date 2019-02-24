@@ -1,0 +1,101 @@
+<style>
+.stat-name{
+	font-size:14px;
+}
+.stat-value{
+	font-size:16px;
+}
+.grid-item{
+	text-align:center;
+	border-radius: 2px;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+	transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+	padding: 15px 0;
+}
+.grid-item:hover{
+	box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+}
+.grid-container{
+	display: grid;
+	grid-column-gap: 5px;
+	grid-row-gap:10px;
+	grid-template-columns: auto auto auto;
+}
+@media screen and (max-width: 1280px) {
+	.grid-container {
+		grid-column-gap: 5px;
+		grid-template-columns: auto auto;
+	}
+}
+@media screen and (max-width: 950px) {
+	.grid-container {
+		grid-column-gap: 0px;
+		grid-template-columns: auto;
+	}
+}
+</style>
+<div class="rpgstats_memberProfile_container panel bg2">
+	<div class="inner">
+		{% if (A_VIS_SETTING == 1 and (A_VIS_LEVEL == 1 or A_VIS_LEVEL == 3 or A_VIS_LEVEL == 4)) or (U_USER_ID == U_VIEWER_ID) or (U_ACP) or (U_CAN_EDIT) %}
+		<div class="grid-container">
+		{% for rpgstats in loops.rpgstats %}
+			{% if not U_ACP and not U_CAN_EDIT and rpgstats.STAT_SECRET == 0 and not A_VIS_LEVEL == 4 %}
+			<div class="grid-item">
+				<div class="stat-name">1{{ rpgstats.STAT_NAME }}</div>
+				<div class="stat-value">{{ rpgstats.STAT_VALUE }}</div>
+			</div>
+			{% elseif not U_ACP and not U_CAN_EDIT and rpgstats.STAT_SECRET == 0 and (A_VIS_SETTING == 1 and A_VIS_LEVEL == 4) and (rpgstats.STAT_VISIBILITY == 1 or rpgstats.STAT_VISIBILITY == 3)%}
+			<div class="grid-item">
+				<div class="stat-name">2{{ rpgstats.STAT_NAME }}</div>
+				<div class="stat-value">{{ rpgstats.STAT_VALUE }}</div>
+			</div>
+			{% elseif U_CAN_EDIT and rpgstats.STAT_SECRET == 0 %}
+			<div class="grid-item">
+				<div class="stat-name">3{{ rpgstats.STAT_NAME }}</div>
+				<div class="stat-value">{{ rpgstats.STAT_VALUE }}</div>
+			</div>
+			{% elseif U_ACP %}
+			<div class="grid-item">
+				<div class="stat-name">4{{ rpgstats.STAT_NAME }}</div>
+				<div class="stat-value">{{ rpgstats.STAT_VALUE }}</div>
+			</div>
+			{% endif %}
+		{% endfor %}
+		</div>
+		{% elseif A_VIS_SETTING == 0 %}
+		<div class="grid-container">
+		{% for rpgstats in loops.rpgstats %}
+			{% if not (U_ACP) and not (U_CAN_EDIT) and rpgstats.STAT_SECRET == 0 and (rpgstats.STAT_VISIBILITY == 1 or rpgstats.STAT_VISIBILITY == 3) %}
+			<div class="grid-item bg1">
+				<div class="stat-name">{{ rpgstats.STAT_NAME }}</div>
+				<div class="stat-value">{{ rpgstats.STAT_VALUE }}</div>
+			</div>
+			{% elseif U_CAN_EDIT and rpgstats.STAT_SECRET == 0 %}
+			<div class="grid-item">
+				<div class="stat-name">6{{ rpgstats.STAT_NAME }}</div>
+				<div class="stat-value">{{ rpgstats.STAT_VALUE }}</div>
+			</div>
+			{% elseif U_ACP %}
+			<div class="grid-item">
+				<div class="stat-name">7{{ rpgstats.STAT_NAME }}</div>
+				<div class="stat-value">{{ rpgstats.STAT_VALUE }}</div>
+			</div>
+			{% endif %}
+		{% endfor %}
+		</div>
+		{% endif %}
+		{% if U_CAN_EDIT or U_ACP %}
+		<div style="width:100%;text-align:center;font-size:16px;padding:10px 0;"><a href="./mcp.php?i=-sauravisus-rpgstats-mcp-main_module&mode=settings&u={{ U_USER_ID }}">{{ lang('RPGSTATS_GO_EDIT') }}</a></div>
+		{% endif %}
+	</div>
+</div>
+<div class="rpgstats_memberProfile_debug panel bg2">
+	Debug info:<br/>
+	<span class="user-id">User ID: {{ U_USER_ID }}</span><br/>
+	<span class="viewer-id">Viewer ID: {{ U_VIEWER_ID }}</span><br/>
+	<span class="admin-visibility">Admin Visibility: {{ A_VIS_SETTING }}</span><br/>
+	<span class="admin-visibility-level">Admin Visibility Level: {{ A_VIS_LEVEL }}</span><br/>
+	<span class="can-edit">Can edit: {{ U_CAN_EDIT }}</span><br/>
+	<span class="is-admin">Is Admin: {{ U_ACP }}</span><br/>
+	<span class="stat-visibility-levels">Stat Visibility Levels: {% for rpgstats in loops.rpgstats %}{{ rpgstats.STAT_VISIBILITY }}{% endfor %}</span><br/>
+</div>

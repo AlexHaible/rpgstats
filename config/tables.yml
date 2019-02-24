@@ -1,0 +1,4 @@
+parameters:
+    sauravisus.rpgstats.table.statsetup: %core.table_prefix%statSetup
+    sauravisus.rpgstats.table.userstats: %core.table_prefix%userStats
+    sauravisus.rpgstats.table.usertable: %core.table_prefix%users

@@ -1,0 +1,119 @@
+{% include 'overall_header.html' %}
+<style>
+.grid-container{
+	display: grid;
+	grid-column-gap: 5px;
+	grid-template-columns: auto auto auto;
+}
+@media screen and (max-width: 1280px) {
+  .grid-container {
+	grid-column-gap: 5px;
+    grid-template-columns: auto auto;
+  }
+}
+@media screen and (max-width: 950px) {
+  .grid-container {
+	grid-column-gap: 0px;
+    grid-template-columns: auto;
+  }
+}
+</style>
+<h1>{{ lang('RPGSTATS_TITLE') }}</h1>
+	<fieldset>
+		<legend>{{ lang('RPGSTATS_SETTINGS') }}</legend>
+		<h2>{{ lang('RPGSTATS_ADD_NEW') }}</h2>
+		<div style="width:100%;">
+			<form id="acp_board" method="post" action="{{ U_ACTION }}">
+				<div>
+					<fieldset>
+						<legend>{{ lang('RPGSTATS_ADD_NEW') }}</legend>
+						<dl>
+							<dt>{{ lang('RPGSTATS_STATNAME') }}</dt>
+							<dd><input type="text" value="" name="statName" /></dd>
+							
+							<dt>{{ lang('RPGSTATS_DEFAULTVALUE') }}</dt>
+							<dd><input type="text" value="" name="statDefaultValue" /></dd>
+							
+							<dt>{{ lang('RPGSTATS_MIN') }}</dt>
+							<dd><input type="text" value="" name="statMin" /></dd>
+							
+							<dt>{{ lang('RPGSTATS_MAX') }}</dt>
+							<dd><input type="text" value="" name="statMax" /></dd>
+							
+							<dt>{{ lang('RPGSTATS_DISPLAY') }}</dt>
+							<dd>
+								<select name="statDisplay" class="setDisplay">
+									<option value="0">{{ lang('RPGSTATS_DISPLAY_HIDDEN') }}</option>
+									<option value="1">{{ lang('RPGSTATS_DISPLAY_PROFILE') }}</option>
+									<option value="2">{{ lang('RPGSTATS_DISPLAY_AVATAR') }}</option>
+									<option value="3">{{ lang('RPGSTATS_DISPLAY_BOTH') }}</option>
+								</select>
+							</dd>
+							<dt>{{ lang('RPGSTATS_HIDDEN_STAT') }}</dt>
+							<dd>
+								<label for="userDecrease"><input type="radio" name="statHidden" value="0" {% if rpgstats.STAT_HIDDEN == 0 %}checked{% endif %} /> {{ lang('RPGSTATS_NO') }}</label>
+								<label for="userDecrease"><input type="radio" name="statHidden" value="1" {% if rpgstats.STAT_HIDDEN == 1 %}checked{% endif %} /> {{ lang('RPGSTATS_YES') }}</label>
+							</dd>
+							<input class="button1" type="submit" id="new" name="new" value="{{ lang('RPGSTATS_NEW') }}" />
+							{{ S_FORM_TOKEN }}
+						</dl>
+					</fieldset>
+				</div>
+			</form>
+		</div>
+		<hr/>
+		<h2>{{ lang('RPGSTATS_SYSTEM_STATS') }}</h2>
+		<div class="grid-container">
+			{% for rpgstats in loops.rpgstats %}
+			<div class="grid-item">
+				<form id="acp_board" method="post" action="{{ U_ACTION }}">
+					<div>
+						<fieldset>
+							<legend>{{ rpgstats.STAT_NAME }}</legend>
+							<dl>
+								<dt>{{ lang('RPGSTATS_STATNAME') }}</dt>
+								<dd><input type="text" value="{{ rpgstats.STAT_NAME }}" name="statName" /></dd>
+								
+								<dt>{{ lang('RPGSTATS_DEFAULTVALUE') }}</dt>
+								<dd><input type="text" value="{{ rpgstats.STAT_DEFAULTVALUE }}" name="statDefaultValue" /></dd>
+								
+								<dt>{{ lang('RPGSTATS_MIN') }}</dt>
+								<dd><input type="text" value="{{ rpgstats.STAT_MIN }}" name="statMin" /></dd>
+								
+								<dt>{{ lang('RPGSTATS_MAX') }}</dt>
+								<dd><input type="text" value="{{ rpgstats.STAT_MAX }}" name="statMax" /></dd>
+								
+								<dt>{{ lang('RPGSTATS_DISPLAY') }}</dt>
+								<dd>
+									<select name="statDisplay" class="setDisplay">
+										<option value="0" {% if rpgstats.STAT_DISPLAY == 0 %}selected{% endif %}>{{ lang('RPGSTATS_DISPLAY_HIDDEN') }}</option>
+										<option value="1" {% if rpgstats.STAT_DISPLAY == 1 %}selected{% endif %}>{{ lang('RPGSTATS_DISPLAY_PROFILE') }}</option>
+										<option value="2" {% if rpgstats.STAT_DISPLAY == 2 %}selected{% endif %}>{{ lang('RPGSTATS_DISPLAY_AVATAR') }}</option>
+										<option value="3" {% if rpgstats.STAT_DISPLAY == 3 %}selected{% endif %}>{{ lang('RPGSTATS_DISPLAY_BOTH') }}</option>
+									</select>
+								</dd>
+								<dt>{{ lang('RPGSTATS_HIDDEN_STAT') }}</dt>
+								<dd>
+									<label for="userDecrease"><input type="radio" name="statHidden" value="0" {% if rpgstats.STAT_HIDDEN == 0 %}checked{% endif %} /> {{ lang('RPGSTATS_NO') }}</label>
+									<label for="userDecrease"><input type="radio" name="statHidden" value="1" {% if rpgstats.STAT_HIDDEN == 1 %}checked{% endif %} /> {{ lang('RPGSTATS_YES') }}</label>
+								</dd>
+								<input type="hidden" value="{{ rpgstats.STAT_ID }}" name="statId" />
+								{% if not (rpgstats.STAT_ID == 1 or rpgstats.STAT_ID == 2 or rpgstats.STAT_ID == 3) %}<input class="button1" type="submit" id="delete" name="delete" value="{{ lang('RPGSTATS_DELETE') }}"/>{% endif %}
+								<input class="button1" type="submit" id="edit" name="edit" value="{{ lang('RPGSTATS_EDIT') }}" />
+								{{ S_FORM_TOKEN }}
+							</dl>
+						</fieldset>
+					</div>
+				</form>
+			</div>
+			{% if rpgstats.STAT_ID == 3 %}
+		</div>
+		<hr/>
+		<h2>{{ lang('RPGSTATS_CUSTOM_STATS') }}</h2>
+		<div class="grid-container">
+			{% endif %}
+		{% endfor %}
+		</div>
+	</fieldset>
+
+{% include 'overall_footer.html' %}

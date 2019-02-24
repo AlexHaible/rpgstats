@@ -1,0 +1,29 @@
+{
+    "name": "sauravisus/rpgstats",
+    "type": "phpbb-extension",
+    "description": "RPG Stats extension for roleplaying forums.",
+    "version": "1.0.0-dev",
+    "time": "2018-10-10",
+    "keywords": ["phpbb", "extension", "rpg", "stats", "rpgstats", "roleplay", "roleplaying", "rp"],
+    "license": "Proprietary",
+    "authors": [
+        {
+            "name": "Sauravisus",
+            "email": "capalex65@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=7.0.0",
+        "composer/installers": "~1.0"
+    },
+    "require-dev": {
+        "phpbb/epv": "dev-master"
+    },
+    "extra": {
+        "display-name": "RPG Stats",
+        "soft-require": {
+            "phpbb/phpbb": "~3.3"
+        }
+    }
+}

@@ -1,0 +1,30 @@
+imports:
+    - { resource: tables.yml }
+services:
+    sauravisus.rpgstats.service:
+        class: sauravisus\rpgstats\service
+        arguments:
+            - '@user'
+            - '@language'
+            - '@config'
+            - '@template'
+
+    sauravisus.rpgstats.listener:
+        class: sauravisus\rpgstats\event\main_listener
+        arguments:
+            - '@template'
+            - '@user'
+            - '@dbal.conn'
+            - '@log'
+            - '@cache'
+            - '@request'
+            - '@config'
+            - '@auth'
+            - '@language'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+            - '%sauravisus.rpgstats.table.statsetup%'
+            - '%sauravisus.rpgstats.table.userstats%'
+            - '%sauravisus.rpgstats.table.usertable%'
+        tags:
+            - { name: event.listener }
