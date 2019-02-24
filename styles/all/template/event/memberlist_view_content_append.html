@@ -41,22 +41,22 @@
 		{% for rpgstats in loops.rpgstats %}
 			{% if not U_ACP and not U_CAN_EDIT and rpgstats.STAT_SECRET == 0 and not A_VIS_LEVEL == 4 %}
 			<div class="grid-item">
-				<div class="stat-name">1{{ rpgstats.STAT_NAME }}</div>
+				<div class="stat-name">{{ rpgstats.STAT_NAME }}</div>
 				<div class="stat-value">{{ rpgstats.STAT_VALUE }}</div>
 			</div>
 			{% elseif not U_ACP and not U_CAN_EDIT and rpgstats.STAT_SECRET == 0 and (A_VIS_SETTING == 1 and A_VIS_LEVEL == 4) and (rpgstats.STAT_VISIBILITY == 1 or rpgstats.STAT_VISIBILITY == 3)%}
 			<div class="grid-item">
-				<div class="stat-name">2{{ rpgstats.STAT_NAME }}</div>
+				<div class="stat-name">{{ rpgstats.STAT_NAME }}</div>
 				<div class="stat-value">{{ rpgstats.STAT_VALUE }}</div>
 			</div>
 			{% elseif U_CAN_EDIT and rpgstats.STAT_SECRET == 0 %}
 			<div class="grid-item">
-				<div class="stat-name">3{{ rpgstats.STAT_NAME }}</div>
+				<div class="stat-name">{{ rpgstats.STAT_NAME }}</div>
 				<div class="stat-value">{{ rpgstats.STAT_VALUE }}</div>
 			</div>
 			{% elseif U_ACP %}
 			<div class="grid-item">
-				<div class="stat-name">4{{ rpgstats.STAT_NAME }}</div>
+				<div class="stat-name">{{ rpgstats.STAT_NAME }}</div>
 				<div class="stat-value">{{ rpgstats.STAT_VALUE }}</div>
 			</div>
 			{% endif %}
@@ -72,12 +72,12 @@
 			</div>
 			{% elseif U_CAN_EDIT and rpgstats.STAT_SECRET == 0 %}
 			<div class="grid-item">
-				<div class="stat-name">6{{ rpgstats.STAT_NAME }}</div>
+				<div class="stat-name">{{ rpgstats.STAT_NAME }}</div>
 				<div class="stat-value">{{ rpgstats.STAT_VALUE }}</div>
 			</div>
 			{% elseif U_ACP %}
 			<div class="grid-item">
-				<div class="stat-name">7{{ rpgstats.STAT_NAME }}</div>
+				<div class="stat-name">{{ rpgstats.STAT_NAME }}</div>
 				<div class="stat-value">{{ rpgstats.STAT_VALUE }}</div>
 			</div>
 			{% endif %}
@@ -88,14 +88,4 @@
 		<div style="width:100%;text-align:center;font-size:16px;padding:10px 0;"><a href="./mcp.php?i=-sauravisus-rpgstats-mcp-main_module&mode=settings&u={{ U_USER_ID }}">{{ lang('RPGSTATS_GO_EDIT') }}</a></div>
 		{% endif %}
 	</div>
-</div>
-<div class="rpgstats_memberProfile_debug panel bg2">
-	Debug info:<br/>
-	<span class="user-id">User ID: {{ U_USER_ID }}</span><br/>
-	<span class="viewer-id">Viewer ID: {{ U_VIEWER_ID }}</span><br/>
-	<span class="admin-visibility">Admin Visibility: {{ A_VIS_SETTING }}</span><br/>
-	<span class="admin-visibility-level">Admin Visibility Level: {{ A_VIS_LEVEL }}</span><br/>
-	<span class="can-edit">Can edit: {{ U_CAN_EDIT }}</span><br/>
-	<span class="is-admin">Is Admin: {{ U_ACP }}</span><br/>
-	<span class="stat-visibility-levels">Stat Visibility Levels: {% for rpgstats in loops.rpgstats %}{{ rpgstats.STAT_VISIBILITY }}{% endfor %}</span><br/>
 </div>
