@@ -98,11 +98,38 @@ class main_module
 				}
 				else 
 				{
+					$statId = $this->db->sql_escape($this->request->variable('statId',0));
+					
 					// TODO: Remove any rows with the deleted statId, and unallocate any points the users might've had.
 					// SQL: UPDATE $this->userStats SET value = value + $deletedStatValue WHERE userId = $forEachedUserIdMatches
 					// Remember to do a "SELECT value FROM $this->userStats WHERE statId = $statId" in a loop for each user and then apply the update statement above.
 					
+					$sql = 'SELECT user_id FROM ' . $this->userTable;
+					$result = $this->db->sql_query($sql);
+					$userIds = $this->db->sql_fetchrowset($result);
+					$this->db->sql_freeresult($result);
+					
+					foreach($userIds as $id)
+					{
+						$userId = $id['user_id'];
+						$sql = "SELECT value FROM $this->userStats WHERE statId = $statId AND userId = $userId";
+						$result = $this->db->sql_query($sql);
+						$statValues = $this->db->sql_fetchrowset($result);
+						$this->db->sql_freeresult($result);
+						
+						foreach($statValues as $stats)
+						{
+							$statValue = $stats['value'];
+							$sql = "UPDATE $this->userStats SET value = value + $statValue WHERE statId = 1 AND userId = $userId";
+							$result = $this->db->sql_query($sql);
+							$this->db->sql_freeresult($result);
+						}
+					}
+					
 					$sql = "DELETE FROM ".$this->statSetup." WHERE id = ".$statId;
+					$result = $this->db->sql_query($sql);
+					$this->db->sql_freeresult($result);
+					$sql = "DELETE FROM ".$this->userStats." WHERE statId = ".$statId;
 					$result = $this->db->sql_query($sql);
 					$this->db->sql_freeresult($result);
 					
@@ -127,7 +154,7 @@ class main_module
 					$statValues = $this->db->sql_fetchrowset($result);
 					$this->db->sql_freeresult($result);
 					
-					$sql = 'SELECT id FROM ' . $this->userTable;
+					$sql = 'SELECT user_id FROM ' . $this->userTable;
 					$result = $this->db->sql_query($sql);
 					$userIds = $this->db->sql_fetchrowset($result);
 					$this->db->sql_freeresult($result);

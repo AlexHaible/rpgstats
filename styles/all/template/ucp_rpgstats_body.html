@@ -1,7 +1,7 @@
 <!-- INCLUDE ucp_header.html -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <style>
-fieldset{
+fieldset.rpgstats_fieldset{
 	display: block;
     margin-inline-start: 2px;
     margin-inline-end: 2px;
@@ -76,11 +76,13 @@ dd input, dd select{
 				{% for rpgstats in loops.rpgstats %}
 					{% if not U_ACP and not rpgstats.STAT_SECRET == 1 %}
 						<div class="grid-item {% if rpgstats.STAT_ID == 1 %}unallocated{% endif %}" {% if rpgstats.STAT_ID == 2 %}style="display:none;"{% endif %}>
-							<fieldset>
+							<fieldset class="rpgstats_fieldset">
 								<legend>{{ rpgstats.STAT_NAME }}</legend>
 								<dl>
 									<input type="hidden" value="{{ rpgstats.STAT_ID }}" name="{{ rpgstats.STAT_ID }}_statId" />
 									<input type="hidden" value="{{ rpgstats.STAT_NAME }}" name="{{ rpgstats.STAT_ID }}_statName" />
+									<input type="hidden" value="{{ rpgstats.STAT_MIN }}" name="statMin" />
+									<input type="hidden" value="{{ rpgstats.STAT_MAX }}" name="statMax" />
 									<dt>{% if rpgstats.STAT_ID == 1 %}{{ lang('RPGSTATS_POINTS_REMAINING') }}{{ lang('COLON') }}{% else %}{{ lang('RPGSTATS_VALUE') }}{% endif %}</dt>
 									<dd class="statValueContainer" style="text-align:center;">
 										<span class="{{ rpgstats.STAT_ID }}_statValue">{{ rpgstats.STAT_VALUE }}</span>
@@ -100,11 +102,13 @@ dd input, dd select{
 						</div>
 					{% elseif U_ACP %}
 						<div class="grid-item {% if rpgstats.STAT_ID == 1 %}unallocated{% endif %}" {% if rpgstats.STAT_ID == 2 %}style="display:none;"{% endif %}>
-							<fieldset>
+							<fieldset class="rpgstats_fieldset">
 								<legend>{{ rpgstats.STAT_NAME }}</legend>
 								<dl>
 									<input type="hidden" value="{{ rpgstats.STAT_ID }}" name="{{ rpgstats.STAT_ID }}_statId" />
 									<input type="hidden" value="{{ rpgstats.STAT_NAME }}" name="{{ rpgstats.STAT_ID }}_statName" />
+									<input type="hidden" value="{{ rpgstats.STAT_MIN }}" name="statMin" />
+									<input type="hidden" value="{{ rpgstats.STAT_MAX }}" name="statMax" />
 									<dt>{% if rpgstats.STAT_ID == 1 %}{{ lang('RPGSTATS_POINTS_REMAINING') }}{{ lang('COLON') }}{% else %}{{ lang('RPGSTATS_VALUE') }}{% endif %}</dt>
 									<dd class="statValueContainer" style="text-align:center;">
 										<span class="{{ rpgstats.STAT_ID }}_statValue">{{ rpgstats.STAT_VALUE }}</span>
@@ -178,9 +182,11 @@ $(document).ready(function(){
 		var hiddenInput = $(this).siblings('input[type=hidden]');
 		var visiblePoints = $(this).siblings('span');
 		var statValue = parseInt(hiddenInput.val(),10);
+		var statMin = $(this).parent().siblings('input[name=statMin]').val();
+		var statMax = $(this).parent().siblings('input[name=statMax]').val();
 		switch($(this).attr('class')){
 			case 'plusOne':
-				if(unallocatedPointsValue > 0){
+				if(unallocatedPointsValue > 0 && statValue+1 <= statMax){
 					hiddenInput.val(statValue+1);
 					unallocatedPoints.siblings('input[type=hidden]').val(unallocatedPointsValue-1);
 					visiblePoints.text(statValue+1);
@@ -188,7 +194,7 @@ $(document).ready(function(){
 				}
 				break;
 			case 'plusTen':
-				if(unallocatedPointsValue >= 10){
+				if(unallocatedPointsValue >= 10 && statValue+10 <= statMax){
 					hiddenInput.val(statValue+10);
 					unallocatedPoints.siblings('input[type=hidden]').val(unallocatedPointsValue-10);
 					visiblePoints.text(statValue+10);
@@ -196,7 +202,7 @@ $(document).ready(function(){
 				}
 				break;
 			case 'plusHundred':
-				if(unallocatedPointsValue >= 100){
+				if(unallocatedPointsValue >= 100 && statValue+100 <= statMax){
 					hiddenInput.val(statValue+100);
 					unallocatedPoints.siblings('input[type=hidden]').val(unallocatedPointsValue-100);
 					visiblePoints.text(statValue+100);
@@ -204,7 +210,7 @@ $(document).ready(function(){
 				}
 				break;
 			case 'minusOne':
-				if(statValue > 0){
+				if(statValue > 0 && statValue-1 >= statMin){
 					hiddenInput.val(statValue-1);
 					unallocatedPoints.siblings('input[type=hidden]').val(unallocatedPointsValue+1);
 					visiblePoints.text(statValue-1);
@@ -212,7 +218,7 @@ $(document).ready(function(){
 				}
 				break;
 			case 'minusTen':
-				if(statValue >= 10){
+				if(statValue >= 10 && statValue-10 >= statMin){
 					hiddenInput.val(statValue-10);
 					unallocatedPoints.siblings('input[type=hidden]').val(unallocatedPointsValue+10);
 					visiblePoints.text(statValue-10);
@@ -220,7 +226,7 @@ $(document).ready(function(){
 				}
 				break;
 			case 'minusHundred':
-				if(statValue >= 100){
+				if(statValue >= 100 && statValue-10 >= statMin){
 					hiddenInput.val(statValue-100);
 					unallocatedPoints.siblings('input[type=hidden]').val(unallocatedPointsValue+100);
 					visiblePoints.text(statValue-100);

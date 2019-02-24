@@ -22,7 +22,7 @@
 {% endif %}
 {% if U_POSTED or U_HAS_GET %}
 <style>
-fieldset{
+fieldset.rpgstats_fieldset{
 	display: block;
     margin-inline-start: 2px;
     margin-inline-end: 2px;
@@ -61,7 +61,7 @@ fieldset{
 			{% if not U_ACP and not rpgstats.STAT_SECRET == 1 %}
 			<div class="grid-item">
 				<form id="rpgstats_mcp_update_stats" method="post" action="{{ U_ACTION }}">
-				<fieldset>
+				<fieldset class="rpgstats_fieldset">
 					<legend>{{ rpgstats.STAT_NAME }}</legend>
 					<dl>
 						<input type="hidden" value="{{ rpgstats.STAT_ID }}" name="statId" />
@@ -81,7 +81,7 @@ fieldset{
 			{% elseif U_ACP %}
 			<div class="grid-item">
 				<form id="rpgstats_mcp_update_stats" method="post" action="{{ U_ACTION }}">
-				<fieldset>
+				<fieldset class="rpgstats_fieldset">
 					<legend>{{ rpgstats.STAT_NAME }}</legend>
 					<dl>
 						<input type="hidden" value="{{ rpgstats.STAT_ID }}" name="statId" />

@@ -173,7 +173,7 @@ class main_module
 		{
 			$userId = $this->user->data['user_id'];
 			
-			$sql = "SELECT $this->statSetup.name, $this->statSetup.id, $this->userStats.value, $this->statSetup.secret, $this->userStats.display FROM $this->statSetup INNER JOIN $this->userStats ON $this->statSetup.id = $this->userStats.statId WHERE $this->userStats.userId = $userId";
+			$sql = "SELECT $this->statSetup.name, $this->statSetup.id, $this->userStats.value, $this->statSetup.secret, $this->userStats.display, $this->statSetup.min, $this->statSetup.max FROM $this->statSetup INNER JOIN $this->userStats ON $this->statSetup.id = $this->userStats.statId WHERE $this->userStats.userId = $userId";
 			$result = $this->db->sql_query($sql);
 			$statValues = $this->db->sql_fetchrowset($result);
 			$this->db->sql_freeresult($result);
@@ -188,8 +188,9 @@ class main_module
 					'STAT_VALUE'	=> $stats['value'],
 					'STAT_SECRET'	=> $stats['secret'],
 					'STAT_DISPLAY'	=> $stats['display'],
+					'STAT_MIN'		=> $stats['min'],
+					'STAT_MAX'		=> $stats['max'],
 				));
-				if($stats['id']==1){$unallocatedPoints=$stats['value'];}
 				$i++;
 			}
 			
@@ -198,7 +199,6 @@ class main_module
 				'S_UCP_ACTION'			=> $this->u_action,
 				'CAN_DECREASE'			=> $this->config->offsetGet('canUsersDecreaseStats'),
 				'NUMBER_OF_STATS'		=> $i,
-				'UNALLOCATED_POINTS'	=> $unallocatedPoints,
 			));
 		}
 	}
