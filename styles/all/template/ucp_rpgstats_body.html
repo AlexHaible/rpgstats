@@ -183,7 +183,7 @@ $(document).ready(function(){
 		var visiblePoints = $(this).siblings('span');
 		var statValue = parseInt(hiddenInput.val(),10);
 		var statMin = $(this).parent().siblings('input[name=statMin]').val();
-		var statMax = $(this).parent().siblings('input[name=statMax]').val();
+		var statMax = ($(this).parent().siblings('input[name=statMax]').val() == 0 ? 1000000000 : $(this).parent().siblings('input[name=statMax]').val());
 		switch($(this).attr('class')){
 			case 'plusOne':
 				if(unallocatedPointsValue > 0 && statValue+1 <= statMax){
@@ -236,7 +236,6 @@ $(document).ready(function(){
 		}
 	});
 });
-
 </script>
 
 <!-- INCLUDE ucp_footer.html -->
