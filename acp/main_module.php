@@ -100,10 +100,6 @@ class main_module
 				{
 					$statId = $this->db->sql_escape($this->request->variable('statId',0));
 					
-					// TODO: Remove any rows with the deleted statId, and unallocate any points the users might've had.
-					// SQL: UPDATE $this->userStats SET value = value + $deletedStatValue WHERE userId = $forEachedUserIdMatches
-					// Remember to do a "SELECT value FROM $this->userStats WHERE statId = $statId" in a loop for each user and then apply the update statement above.
-					
 					$sql = 'SELECT user_id FROM ' . $this->userTable;
 					$result = $this->db->sql_query($sql);
 					$userIds = $this->db->sql_fetchrowset($result);
@@ -134,6 +130,7 @@ class main_module
 					$this->db->sql_freeresult($result);
 					
 					$this->log->add('admin', $this->user->data['user_id'], $this->user->data['user_ip'], $this->language->lang('RPGSTATS_STAT_DELETED').': '.$statName);
+					trigger_error($this->language->lang('RPGSTATS_STAT_DELETED').' '. adm_back_link($this->u_action));
 				}
 			}
 			
