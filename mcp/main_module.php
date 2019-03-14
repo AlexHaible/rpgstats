@@ -42,20 +42,24 @@ class main_module
 	{
 		global $phpbb_container, $phpEx, $phpbb_root_path;
         
-		$this->db		= $phpbb_container->get('dbal.conn');
-		$this->language	= $phpbb_container->get('language');
-		$this->log		= $phpbb_container->get('log');
-		$this->user		= $phpbb_container->get('user');
-		$this->request	= $phpbb_container->get('request');
-		$this->template	= $phpbb_container->get('template');
-		$this->config	= $phpbb_container->get('config');
+		$this->db			= $phpbb_container->get('dbal.conn');
+		$this->language		= $phpbb_container->get('language');
+		$this->log			= $phpbb_container->get('log');
+		$this->user			= $phpbb_container->get('user');
+		$this->request		= $phpbb_container->get('request');
+		$this->template		= $phpbb_container->get('template');
+		$this->config		= $phpbb_container->get('config');
 		
 		$this->language->add_lang('common', 'sauravisus/rpgstats');
 		
-		$this->statSetup = $phpbb_container->getParameter('sauravisus.rpgstats.table.statsetup');
-		$this->userStats = $phpbb_container->getParameter('sauravisus.rpgstats.table.userstats');
-		$this->userTable = $phpbb_container->getParameter('sauravisus.rpgstats.table.usertable');
-
+		$this->tablePrefix	= $phpbb_container->getParameter('core.table_prefix');
+		$this->statSetup	= $this->tablePrefix.'statSetup';
+		$this->userStats	= $this->tablePrefix.'userStats';
+		$this->userTable	= $this->tablePrefix.'users';
+		$this->statLimit	= $this->tablePrefix.'statLimiters';
+		$this->userGroup	= $this->tablePrefix.'user_group';
+		$this->groupTabl	= $this->tablePrefix.'groups';
+		
 		$this->tpl_name = 'mcp_rpgstats_body';
 		$this->page_title = $this->user->lang('MCP_RPGSTATS_TITLE');
 		add_form_key('sauravisus_rpgstats_mcp');
@@ -71,13 +75,13 @@ class main_module
 				{
 					if ($this->request->is_set_post('submituser')){
 						$username = $this->db->sql_escape($this->request->variable('targetUser',''));
-						$sql = "SELECT user_id FROM $this->userTable WHERE username = '$username'";
+						$sql = "SELECT user_id, group_id FROM $this->userTable WHERE username = '$username'";
 						$result = $this->db->sql_query($sql);
 						$userId = $this->db->sql_fetchfield('user_id');
 						$this->db->sql_freeresult($result);
 					} else {
 						$userId = $this->request->variable('u',0);
-						$sql = "SELECT username FROM $this->userTable WHERE user_id = '$userId'";
+						$sql = "SELECT username, group_id FROM $this->userTable WHERE user_id = '$userId'";
 						$result = $this->db->sql_query($sql);
 						$username = $this->db->sql_fetchfield('username');
 						$this->db->sql_freeresult($result);
@@ -97,7 +101,7 @@ class main_module
 							'STAT_SECRET'	=> $stats['secret'],
 						));
 					}
-					
+						
 					$this->template->assign_vars(array(
 						'U_POSTED'	=> true,
 						'U_ID'		=> $userId,

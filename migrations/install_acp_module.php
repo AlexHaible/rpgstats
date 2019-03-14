@@ -30,7 +30,7 @@ class install_acp_module extends \phpbb\db\migration\migration
 				'ACP_RPGSTATS_TITLE',
 				array(
 					'module_basename'	=> '\sauravisus\rpgstats\acp\main_module',
-					'modes'				=> array('stats','settings'),
+					'modes'				=> array('stats','settings','limiters'),
 				),
 			)),
 			array('config.add', array(

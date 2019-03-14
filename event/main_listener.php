@@ -31,11 +31,9 @@ class main_listener implements EventSubscriberInterface
 	protected $language;
 	protected $root_path;
 	protected $php_ext;
-	protected $rpgstats_stat_setup_table;
-	protected $rpgstats_user_stats_table;
-	protected $rpgstats_user_table;
+	protected $table_prefix;
 
-    /**
+	/**
 	* Constructor
 	*
 	* @param \phpbb\template\template		 	$template
@@ -46,10 +44,10 @@ class main_listener implements EventSubscriberInterface
 	* @param \phpbb\cache\service		 		$cache
 	* @param \phpbb\request\request		 		$request
 	* @param \phpbb\config\config				$config
-	* @param string								$php_ext           phpEx
+	* @param string								$php_ext		   phpEx
 	* @access public
 	*/
-    public function __construct(
+	public function __construct(
 		\phpbb\template\template $template,
 		\phpbb\user $user,
 		\phpbb\db\driver\driver_interface $db,
@@ -61,51 +59,56 @@ class main_listener implements EventSubscriberInterface
 		\phpbb\language\language $language,
 		$root_path,
 		$php_ext,
-		$rpgstats_stat_setup_table, 
-		$rpgstats_user_stats_table,
-		$rpgstats_user_table
+		$table_prefix
 	)
-    {
-		$this->template 	= $template;
-		$this->user 		= $user;
-		$this->db 			= $db;
-		$this->log 			= $log;
-		$this->cache 		= $cache;
-		$this->request 		= $request;
-		$this->config 		= $config;
-		$this->auth 		= $auth;
-		$this->language		= $language;
-		$this->php_ext 		= $php_ext;
-		$this->root_path 	= $root_path;
-		$this->stat_setup	= $rpgstats_stat_setup_table;
-		$this->user_stats	= $rpgstats_user_stats_table;
-		$this->user_table	= $rpgstats_user_table;
-    }
+	{
+		$this->template 		= $template;
+		$this->user 			= $user;
+		$this->db 				= $db;
+		$this->log 				= $log;
+		$this->cache 			= $cache;
+		$this->request 			= $request;
+		$this->config 			= $config;
+		$this->auth 			= $auth;
+		$this->language			= $language;
+		$this->php_ext 			= $php_ext;
+		$this->root_path 		= $root_path;
+		$this->table_prefix 	= $table_prefix;
+		$this->stat_setup		= $this->table_prefix.'statSetup';
+		$this->user_stats		= $this->table_prefix.'userStats';
+		$this->user_table		= $this->table_prefix.'users';
+		$this->limiter_table	= $this->table_prefix.'statLimiters';
+		$this->user_groups		= $this->table_prefix.'user_group';
+	}
 
 	/**
-     * Assign functions defined in this class to event listeners in the core
-     *
-     * @return array
-     */
-    static public function getSubscribedEvents()
-    {
-        return array(
-			'core.user_add_after'								=> 'handleDatabaseAdditions',
-			'core.permissions'									=> 'permissions',
-			'core.page_header_after'							=> 'moneyInHeader',
-			'core.viewtopic_modify_post_data'					=> 'generateStatsForAvatar',
-			'core.viewtopic_modify_post_row'					=> 'displayStatsBelowAvatar',
-			'core.memberlist_view_profile'						=> 'statsInProfile',
+	 * Assign functions defined in this class to event listeners in the core
+	 *
+	 * @return array
+	 */
+	static public function getSubscribedEvents()
+	{
+		return array(
+			'core.user_add_after'						=> 'handleDatabaseAdditions',
+			'core.permissions'							=> 'permissions',
+			'core.page_header_after'					=> 'moneyInHeader',
+			'core.viewtopic_modify_post_data'			=> 'generateStatsForAvatar',
+			'core.viewtopic_modify_post_row'			=> 'displayStatsBelowAvatar',
+			'core.memberlist_view_profile'				=> 'statsInProfile',
+			'core.acp_manage_group_request_data'		=> 'acp_manage_group_request_data',
+			'core.acp_manage_group_initialise_data'		=> 'acp_manage_group_initialise_data',
+			'core.acp_manage_group_display_form'		=> 'acp_manage_group_display_form',
+			'core.user_setup'							=> 'user_setup',
 		);
-    }
+	}
 
-    /**
+	/**
 	 * Add stats to the new user in the database
 	 * 
-     * @param \phpbb\event\data $event The event object
-     */
-    public function handleDatabaseAdditions($event)
-    {
+	 * @param \phpbb\event\data $event The event object
+	 */
+	public function handleDatabaseAdditions($event)
+	{
 		$userId = $event['user_id'];
 		$sql = 'SELECT id, defaultValue, display, secret FROM ' . $this->stat_setup;
 		$result = $this->db->sql_query($sql);
@@ -116,7 +119,7 @@ class main_listener implements EventSubscriberInterface
 			$result = $this->db->sql_query($sql);
 			$this->db->sql_freeresult($result);
 		}
-    }
+	}
 	
 	public function generateStatsForAvatar($event){
 		$rowset						= $event['rowset'];
@@ -255,5 +258,51 @@ class main_listener implements EventSubscriberInterface
 		$event['permissions']	= $permissions;
 		$categories['rpgstats']	= 'ACL_CAT_STATS';
 		$event['categories']	= array_merge($event['categories'], $categories);
+	}
+	
+	public function acp_manage_group_request_data($event)
+	{
+		$submit_ary = $event['submit_ary'];
+		$submit_ary['limiter'] = $this->request->variable('group_limiter', 0);
+		$event['submit_ary'] = $submit_ary;
+	}
+	
+	public function acp_manage_group_initialise_data($event)
+	{
+		$test_variables = $event['test_variables'];
+		$test_variables['limiter'] = 'int';
+		$event['test_variables'] = $test_variables;
+	}
+	
+	public function acp_manage_group_display_form($event)
+	{
+		$group_row = $event['group_row'];
+		$this->template->assign_vars(array(
+			'GROUP_LIMITER' => $group_row['group_limiter'],
+		));
+		
+		// Grab limiters
+		$sql = "SELECT id, name FROM $this->limiter_table";
+		$result = $this->db->sql_query($sql);
+		$limiters = $this->db->sql_fetchrowset($result);
+		$this->db->sql_freeresult($result);
+		
+		foreach($limiters as $limiter)
+		{
+			$this->template->assign_block_vars('limiters', array(
+				'LIMITER_ID'	=> $limiter['id'],
+				'LIMITER_NAME'	=> $limiter['name'],
+			));
+		}
+	}
+	
+	public function user_setup($event)
+	{
+		$lang_set_ext = $event['lang_set_ext'];
+		$lang_set_ext[] = array(
+			'ext_name'	=> 'sauravisus/rpgstats',
+			'lang_set'	=> 'common',
+		);
+		$event['lang_set_ext'] = $lang_set_ext;
 	}
 }

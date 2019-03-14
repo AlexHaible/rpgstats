@@ -23,8 +23,6 @@ services:
             - '@language'
             - '%core.root_path%'
             - '%core.php_ext%'
-            - '%sauravisus.rpgstats.table.statsetup%'
-            - '%sauravisus.rpgstats.table.userstats%'
-            - '%sauravisus.rpgstats.table.usertable%'
+            - '%core.table_prefix%'
         tags:
             - { name: event.listener }

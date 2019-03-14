@@ -21,7 +21,7 @@ class install_user_schema extends \phpbb\db\migration\migration
 	{
 		return array(
 			'add_tables' => array(
-				$this->table_prefix . 'statSetup'	=> array(
+				$this->table_prefix . 'statSetup'		=> array(
 					'COLUMNS' => array(
 						'id'			=> array('UINT', null, 'auto_increment'),
 						'name'			=> array('VCHAR:255', ''),
@@ -33,7 +33,7 @@ class install_user_schema extends \phpbb\db\migration\migration
 					),
 					'PRIMARY_KEY' => 'id'
 				),
-				$this->table_prefix . 'userStats'	=> array(
+				$this->table_prefix . 'userStats'		=> array(
 					'COLUMNS' => array(
 						'id'			=> array('UINT', null, 'auto_increment'),
 						'userId'		=> array('UINT', 0),
@@ -42,6 +42,20 @@ class install_user_schema extends \phpbb\db\migration\migration
 						'display'		=> array('UINT', 0),
 					),
 					'PRIMARY_KEY' => 'id'
+				),
+				$this->table_prefix . 'statLimiters'	=> array(
+					'COLUMNS' => array(
+						'id'			=> array('UINT', null, 'auto_increment'),
+						'name'			=> array('VCHAR:255', 0),
+						'min'			=> array('UINT', 0),
+						'max'			=> array('UINT', 0),
+					),
+					'PRIMARY_KEY' => 'id'
+				),
+			),
+			'add_columns'	=> array(
+				$this->table_prefix . 'groups'	=> array(
+					'group_limiter'		=> array('UINT', 1),
 				),
 			),
 		);
@@ -53,6 +67,12 @@ class install_user_schema extends \phpbb\db\migration\migration
 			'drop_tables' => array(
 				$this->table_prefix . 'statSetup',
 				$this->table_prefix . 'userStats',
+				$this->table_prefix . 'statLimiters',
+			),
+			'drop_columns'	=> array(
+				$this->table_prefix . 'groups'	=> array(
+					'group_limiter',
+				),
 			),
 		);
 	}
@@ -77,11 +97,17 @@ class install_user_schema extends \phpbb\db\migration\migration
 	
 	public function insertDefaultData()
 	{
-		/* Protected stats */
 		$statSetup	= $this->table_prefix.'statSetup';
 		$users		= $this->table_prefix.'users';
 		$userStats	= $this->table_prefix.'userStats';
+		$statLimit	= $this->table_prefix.'statLimiters';
 		
+		/* Default limiter of 0 */
+		$sql = "INSERT INTO $statLimit (name, min, max) VALUES ('No Limiter',0,0)";
+		$result = $this->db->sql_query($sql);
+		$this->db->sql_freeresult($result);
+		
+		/* Protected stats */
 		$sql = "INSERT INTO $statSetup (name, defaultValue, min, max, display, secret) VALUES ('Unallocated Points',0,0,0,0,0)";
 		$result = $this->db->sql_query($sql);
 		$this->db->sql_freeresult($result);

@@ -1,4 +1,6 @@
 parameters:
     sauravisus.rpgstats.table.statsetup: %core.table_prefix%statSetup
     sauravisus.rpgstats.table.userstats: %core.table_prefix%userStats
+    sauravisus.rpgstats.table.statlimit: %core.table_prefix%statLimiters
     sauravisus.rpgstats.table.usertable: %core.table_prefix%users
+    sauravisus.rpgstats.table.usergroup: %core.table_prefix%user_group

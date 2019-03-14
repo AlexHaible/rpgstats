@@ -1,0 +1,11 @@
+<dl>
+	<dt><label for="group_limiter">{{ lang('RPGSTATS_LIMITER') }}{{ lang('COLON') }}</label><br /><span>{{ lang('RPGSTATS_LIMITER_EXPLAINATION') }}</span></dt>
+	<dd>
+		<select class="group_limiter" name="group_limiter" id="group_limiter">
+			{% for limiters in loops.limiters %}
+			<option value="{{ limiters.LIMITER_ID }}" {% if GROUP_LIMITER == limiters.LIMITER_ID %}selected="selected"{% endif %}>{{ limiters.LIMITER_NAME }}</option>
+			{% endfor %}
+		</select>
+		<p>{{ TEST_VALUE }}</p>
+	</dd>
+</dl>

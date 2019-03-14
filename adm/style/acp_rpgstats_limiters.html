@@ -1,0 +1,86 @@
+{% include 'overall_header.html' %}
+<style>
+.grid-container{
+	display: grid;
+	grid-column-gap: 5px;
+	grid-template-columns: auto auto auto;
+}
+@media screen and (max-width: 1280px) {
+	.grid-container {
+		grid-column-gap: 5px;
+		grid-template-columns: auto auto;
+	}
+}
+@media screen and (max-width: 950px) {
+	.grid-container {
+		grid-column-gap: 0px;
+		grid-template-columns: auto;
+	}
+}
+</style>
+<h1>{{ lang('RPGSTATS_TITLE') }}</h1>
+	<fieldset>
+		<legend>{{ lang('RPGSTATS_SETTINGS') }}</legend>
+		<p>{{ lang('RPGSTATS_LIMITERS_EXPLANATION') }}</p>
+		<h2>{{ lang('RPGSTATS_ADD_NEW_LIMITER') }}</h2>
+		<div style="width:100%;">
+			<form id="acp_board" method="post" action="{{ U_ACTION }}">
+				<div>
+					<fieldset>
+						<legend>{{ lang('RPGSTATS_ADD_NEW_LIMITER') }}</legend>
+						<dl>
+							<dt>{{ lang('RPGSTATS_LIMITERNAME') }}</dt>
+							<dd><input type="text" value="" name="limiterName" /></dd>
+							
+							<dt>{{ lang('RPGSTATS_MIN') }}</dt>
+							<dd><input type="text" value="" name="limiterMin" /></dd>
+							
+							<dt>{{ lang('RPGSTATS_MAX') }}</dt>
+							<dd><input type="text" value="" name="limiterMax" /></dd>
+
+							<input class="button1" type="submit" id="new" name="new" value="{{ lang('RPGSTATS_NEW') }}" />
+							{{ S_FORM_TOKEN }}
+						</dl>
+					</fieldset>
+				</div>
+			</form>
+		</div>
+		<hr/>
+		<h2>{{ lang('RPGSTATS_SYSTEM_LIMITERS') }}</h2>
+		<div class="grid-container">
+		{% for rpgstats in loops.rpgstats %}
+			<div class="grid-item">
+				<form id="acp_board" method="post" action="{{ U_ACTION }}">
+					<div>
+						<fieldset>
+							<legend>{{ rpgstats.LIMITER_NAME }}</legend>
+							<dl>
+								<dt>{{ lang('RPGSTATS_LIMITERNAME') }}</dt>
+								<dd><input type="text" value="{{ rpgstats.LIMITER_NAME }}" name="limiterName" /></dd>
+								
+								<dt>{{ lang('RPGSTATS_MIN') }}</dt>
+								<dd><input type="text" value="{{ rpgstats.LIMITER_MIN }}" name="limiterMin" /></dd>
+								
+								<dt>{{ lang('RPGSTATS_MAX') }}</dt>
+								<dd><input type="text" value="{{ rpgstats.LIMITER_MAX }}" name="limiterMax" /></dd>
+								
+								<input type="hidden" value="{{ rpgstats.LIMITER_ID }}" name="limiterId" />
+								{% if not (rpgstats.LIMITER_ID == 1) %}<input class="button1" type="submit" id="delete" name="delete" value="{{ lang('RPGSTATS_DELETE') }}"/>{% endif %}
+								<input class="button1" type="submit" id="edit" name="edit" value="{{ lang('RPGSTATS_EDIT') }}" />
+								{{ S_FORM_TOKEN }}
+							</dl>
+						</fieldset>
+					</div>
+				</form>
+			</div>
+			{% if rpgstats.LIMITER_ID == 1 %}
+		</div>
+		<hr/>
+		<h2>{{ lang('RPGSTATS_CUSTOM_LIMITERS') }}</h2>
+		<div class="grid-container">
+			{% endif %}
+		{% endfor %}
+		</div>
+	</fieldset>
+
+{% include 'overall_footer.html' %}

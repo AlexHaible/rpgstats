@@ -52,9 +52,13 @@ class main_module
 		
 		$this->language->add_lang('common', 'sauravisus/rpgstats');
 		
-		$this->statSetup = $phpbb_container->getParameter('sauravisus.rpgstats.table.statsetup');
-		$this->userStats = $phpbb_container->getParameter('sauravisus.rpgstats.table.userstats');
-		$this->userTable = $phpbb_container->getParameter('sauravisus.rpgstats.table.usertable');
+		$this->tablePrefix	= $phpbb_container->getParameter('core.table_prefix');
+		$this->statSetup	= $this->tablePrefix.'statSetup';
+		$this->userStats	= $this->tablePrefix.'userStats';
+		$this->userTable	= $this->tablePrefix.'users';
+		$this->statLimit	= $this->tablePrefix.'statLimiters';
+		$this->userGroup	= $this->tablePrefix.'user_group';
+		$this->groupTabl	= $this->tablePrefix.'groups';
 
 		$this->tpl_name = 'ucp_rpgstats_body';
 		$this->page_title = $this->user->lang('UCP_RPGSTATS_TITLE');
@@ -173,6 +177,36 @@ class main_module
 		{
 			$userId = $this->user->data['user_id'];
 			
+			$sql = "SELECT group_id FROM $this->userGroup WHERE user_id = $userId";
+			$result = $this->db->sql_query($sql);
+			$groupIds = $this->db->sql_fetchrowset($result);
+			$this->db->sql_freeresult($result);
+			
+			$listOfLimiters = array();
+			$listOfMinMax = array();
+			
+			foreach($groupIds as $group)
+			{
+				$theGroupId = $group['group_id'];
+				$sql = "SELECT group_limiter FROM $this->groupTabl WHERE group_id = $theGroupId";
+				$result = $this->db->sql_query($sql);
+				$groupLimiter = $this->db->sql_fetchrowset($result);
+				$this->db->sql_freeresult($result);
+				$listOfLimiters[] = $groupLimiter[0]['group_limiter'];
+			}
+			foreach($listOfLimiters as $limiter)
+			{
+				if($limiter != 1){
+					$sql = "SELECT min, max FROM $this->statLimit WHERE id = $limiter";
+					$result = $this->db->sql_query($sql);
+					$minMaxValues = $this->db->sql_fetchrowset($result);
+					$this->db->sql_freeresult($result);
+					
+					$listOfMinMax['min'][] = $minMaxValues[0]['min'];
+					$listOfMinMax['max'][] = $minMaxValues[0]['max'];
+				}
+			}
+			
 			$sql = "SELECT $this->statSetup.name, $this->statSetup.id, $this->userStats.value, $this->statSetup.secret, $this->userStats.display, $this->statSetup.min, $this->statSetup.max FROM $this->statSetup INNER JOIN $this->userStats ON $this->statSetup.id = $this->userStats.statId WHERE $this->userStats.userId = $userId";
 			$result = $this->db->sql_query($sql);
 			$statValues = $this->db->sql_fetchrowset($result);
@@ -194,11 +228,16 @@ class main_module
 				$i++;
 			}
 			
+			$biggestMaxValue = max($listOfMinMax['max']);
+			$biggestMinValue = max($listOfMinMax['min']);
+			
 			$this->template->assign_vars(array(
 				'U_ID'					=> $userId,
 				'S_UCP_ACTION'			=> $this->u_action,
 				'CAN_DECREASE'			=> $this->config->offsetGet('canUsersDecreaseStats'),
 				'NUMBER_OF_STATS'		=> $i,
+				'U_MAX_OVERRIDE'		=> $biggestMaxValue,
+				'U_MIN_OVERRIDE'		=> $biggestMinValue,
 			));
 		}
 	}

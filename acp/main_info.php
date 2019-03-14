@@ -31,6 +31,11 @@ class main_info
 					'auth'	=> 'ext_sauravisus/rpgstats && acl_a_board && acl_a_stats',
 					'cat'	=> array('RPGSTATS_TITLE')
 				),
+				'limiters'	=> array(
+					'title'	=> 'RPGSTATS_LIMITERS',
+					'auth'	=> 'ext_sauravisus/rpgstats && acl_a_board && acl_a_stats',
+					'cat'	=> array('RPGSTATS_TITLE')
+				),
 			),
 		);
 	}

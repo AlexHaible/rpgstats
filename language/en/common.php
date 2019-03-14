@@ -29,7 +29,7 @@ $lang = array_merge($lang, array(
 	'RPGSTATS_REALLOCATION_TITLE'		=> 'Stat Reallocation',
 	'RPGSTATS_GREALLOCATION_TITLE'		=> 'Global Reallocation',
 	'RPGSTATS_SREALLOCATION_TITLE'		=> 'Single Reallocation',
-	
+	'RPGSTATS_LIMITER'					=> 'Group Limiter',
 	'RPGSTATS_STATNAME'					=> 'Name of the stat',
 	'RPGSTATS_DEFAULTVALUE'				=> 'Default value',
 	'RPGSTATS_MIN'						=> 'Minimum value',
@@ -53,6 +53,7 @@ $lang = array_merge($lang, array(
 	'RPGSTATS_SYSTEM_STATS'				=> 'Required Stats',
 	'RPGSTATS_CUSTOM_STATS'				=> 'Custom Stats',
 	'RPGSTATS_ADD_NEW'					=> 'Add new stat',
+	'RPGSTATS_LIMITERS'					=> 'Limiters',
 	'RPGSTATS_STATS'					=> 'Stats',
 	'RPGSTATS_ENABLED'					=> 'Enabled',
 	'RPGSTATS_DISABLED'					=> 'Disabled',
@@ -63,6 +64,8 @@ $lang = array_merge($lang, array(
 	
 	'RPGSTATS_STAT_EDITED'				=> 'Stat edited',
 	'RPGSTATS_STAT_DELETED'				=> 'Stat deleted',
+	'RPGSTATS_LIMITER_EDITED'			=> 'Limiter edited',
+	'RPGSTATS_LIMITER_DELETED'			=> 'Limiter deleted',
 	'RPGSTATS_SETTINGS_EDITED'			=> 'Settings changed',
 	'FROM_VALUE'						=> 'from value',
 	'TO_VALUE'							=> 'to value',

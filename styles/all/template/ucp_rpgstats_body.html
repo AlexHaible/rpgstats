@@ -69,6 +69,7 @@ dd input, dd select{
 	}
 }
 </style>
+{{ U_MIN_MAX_VALUES }}
 <div class="panel">
 	<div class="inner">
 		<form id="rpgstats_ucp_update_stats" method="post" action="{{ U_ACTION }}">
@@ -148,6 +149,10 @@ $(document).ready(function(){
 	var minusTenButton		= "<button class='minusTen' value='10'>-10</button>";
 	var minusHundredButton	= "<button class='minusHundred' value='100'>-100</button>";
 	var i = 4;
+	var minOverride = '{{ U_MIN_OVERRIDE }}';
+	var maxOverride = '{{ U_MAX_OVERRIDE }}';
+	var statMin = 0;
+	var statMax = 0;
 	while (i <= {{ NUMBER_OF_STATS }}) {
 		var targetClass			= '.'+i+'_statValue';
 		var unallocatedPoints	= parseInt($('span.1_statValue').siblings('input[type=hidden]').val(),10);
@@ -182,8 +187,16 @@ $(document).ready(function(){
 		var hiddenInput = $(this).siblings('input[type=hidden]');
 		var visiblePoints = $(this).siblings('span');
 		var statValue = parseInt(hiddenInput.val(),10);
-		var statMin = $(this).parent().siblings('input[name=statMin]').val();
-		var statMax = ($(this).parent().siblings('input[name=statMax]').val() == 0 ? 1000000000 : $(this).parent().siblings('input[name=statMax]').val());
+		if(minOverride == ''){
+			statMin = $(this).parent().siblings('input[name=statMin]').val();
+		} else {
+			statMin = parseInt(minOverride, 10);
+		}
+		if(maxOverride == ''){
+			statMax = ($(this).parent().siblings('input[name=statMax]').val() == 0 ? 1000000000 : $(this).parent().siblings('input[name=statMax]').val());
+		} else {
+			statMax = parseInt(maxOverride, 10);
+		}
 		switch($(this).attr('class')){
 			case 'plusOne':
 				if(unallocatedPointsValue > 0 && statValue+1 <= statMax){
@@ -235,6 +248,7 @@ $(document).ready(function(){
 				break;
 		}
 	});
+	$('#rpgstats_ucp_update_stats').prepend('<p style="text-align:center;">Minimum Stat Value: '+parseInt(minOverride, 10)+' | Maximum Stat Value: '+parseInt(maxOverride, 10)+'</p>');
 });
 </script>
 

@@ -54,9 +54,94 @@ class main_module
 		
 		$this->statSetup = $phpbb_container->getParameter('sauravisus.rpgstats.table.statsetup');
 		$this->userStats = $phpbb_container->getParameter('sauravisus.rpgstats.table.userstats');
+		$this->statLimit = $phpbb_container->getParameter('sauravisus.rpgstats.table.statlimit');
 		$this->userTable = $phpbb_container->getParameter('sauravisus.rpgstats.table.usertable');
 		
 		add_form_key('sauravisus_rpgstats_acp');
+		
+		if($mode == "limiters"){
+			$this->page_title = $this->language->lang('RPGSTATS_LIMITERS_TITLE');
+			$this->tpl_name = 'acp_rpgstats_limiters';
+			
+			if ($this->request->is_set_post('edit') || $this->request->is_set_post('delete') || $this->request->is_set_post('new'))
+			{
+				$limiterName	= $this->db->sql_escape($this->request->variable('limiterName',''));
+				$limiterMin		= $this->db->sql_escape($this->request->variable('limiterMin',0));
+				$limiterMax		= $this->db->sql_escape($this->request->variable('limiterMax',0));
+				$limiterId		= ($this->request->is_set_post('new') ? 0 : $this->db->sql_escape($this->request->variable('limiterId',0)));
+			}
+			
+			if ($this->request->is_set_post('edit'))
+			{
+				if (!check_form_key('sauravisus_rpgstats_acp'))
+				{
+					trigger_error($this->language->lang('FORM_INVALID').' '. adm_back_link($this->u_action));
+				}
+				else 
+				{
+					$sql = "UPDATE $this->statLimit SET name = '$limiterName', min = '$limiterMin', max = '$limiterMax' WHERE id = $limiterId";
+					$result = $this->db->sql_query($sql);
+					$this->db->sql_freeresult($result);
+					
+					$this->log->add('admin', $this->user->data['user_id'], $this->user->data['user_ip'], $this->language->lang('RPGSTATS_LIMITER_EDITED').': '.$limiterName);
+					trigger_error($this->language->lang('RPGSTATS_LIMITER_EDITED').' '. adm_back_link($this->u_action));
+				}
+			}
+			
+			if ($this->request->is_set_post('delete'))
+			{
+				if (!check_form_key('sauravisus_rpgstats_acp'))
+				{
+					trigger_error($this->language->lang('FORM_INVALID').' '. adm_back_link($this->u_action));
+				}
+				else 
+				{
+					$limiterId = $this->db->sql_escape($this->request->variable('limiterId',0));
+					
+					$sql = "DELETE FROM ".$this->statLimit." WHERE id = ".$limiterId;
+					$result = $this->db->sql_query($sql);
+					$this->db->sql_freeresult($result);
+					
+					$this->log->add('admin', $this->user->data['user_id'], $this->user->data['user_ip'], $this->language->lang('RPGSTATS_LIMITER_DELETED').': '.$limiterName);
+					trigger_error($this->language->lang('RPGSTATS_LIMITER_DELETED').' '. adm_back_link($this->u_action));
+				}
+			}
+			
+			if ($this->request->is_set_post('new'))
+			{
+				if (!check_form_key('sauravisus_rpgstats_acp'))
+				{
+					trigger_error($this->language->lang('FORM_INVALID').' '. adm_back_link($this->u_action));
+				}
+				else
+				{
+					$sql = "INSERT INTO ".$this->statLimit." (name, min, max) VALUES ('$limiterName',$limiterMin,$limiterMax)";
+					$result = $this->db->sql_query($sql);
+					$this->db->sql_freeresult($result);
+					
+					$this->log->add('admin', $this->user->data['user_id'], $this->user->data['user_ip'], $this->language->lang('RPGSTATS_LIMITER_CREATED').': '.$limiterName);
+				}
+			}
+			
+			$sql = 'SELECT id, name, min, max FROM ' . $this->statLimit;
+			$result = $this->db->sql_query($sql);
+			$statValues = $this->db->sql_fetchrowset($result);
+			$this->db->sql_freeresult($result);
+			
+			foreach($statValues as $stats)
+			{
+				$this->template->assign_block_vars('rpgstats', array(
+					'LIMITER_ID'			=> $stats['id'],
+					'LIMITER_NAME'			=> $stats['name'],
+					'LIMITER_MIN'			=> $stats['min'],
+					'LIMITER_MAX'			=> $stats['max'],
+				));
+			}
+			
+			$this->template->assign_vars(array(
+				'U_ACTION'	=> $this->u_action,
+			));
+		}
 		
 		if($mode == "stats")
 		{
@@ -129,8 +214,8 @@ class main_module
 					$result = $this->db->sql_query($sql);
 					$this->db->sql_freeresult($result);
 					
-					$this->log->add('admin', $this->user->data['user_id'], $this->user->data['user_ip'], $this->language->lang('RPGSTATS_STAT_DELETED').': '.$statName);
-					trigger_error($this->language->lang('RPGSTATS_STAT_DELETED').' '. adm_back_link($this->u_action));
+					$this->log->add('admin', $this->user->data['user_id'], $this->user->data['user_ip'], $this->language->lang('RPGSTATS_LIMITER_DELETED').': '.$statName);
+					trigger_error($this->language->lang('RPGSTATS_LIMITER_DELETED').' '. adm_back_link($this->u_action));
 				}
 			}
 			
