@@ -64,6 +64,17 @@ class main_module
 		$this->page_title = $this->user->lang('MCP_RPGSTATS_TITLE');
 		add_form_key('sauravisus_rpgstats_mcp');
 
+		function GetPrefixedItemsFromArray($array, $prefix){
+			$keys = array_keys($array);
+			$result = array();
+			foreach ($keys as $key){
+				if (strpos($key, $prefix) === 0){
+					$result[$key] = $array[$key];
+				}
+			}
+			return $result;
+		}
+
 		if($mode == "settings"){
 			if ($this->request->is_set_post('submituser') || $this->request->variable('u',0))
 			{
@@ -106,8 +117,6 @@ class main_module
 						'U_POSTED'	=> true,
 						'U_ID'		=> $userId,
 						'U_NAME'	=> $username,
-						'U_TEST'	=> $this->request->variable('u',0),
-						'U_HAS_GET'	=> $this->request->variable('u',0),
 					));
 				}
 			}
@@ -119,32 +128,63 @@ class main_module
 				}
 				else
 				{
-					$statId = $this->db->sql_escape($this->request->variable('statId',''));
-					$newStatValue = $this->db->sql_escape($this->request->variable('newStatValue',''));
-					$userId = $this->db->sql_escape($this->request->variable('userId',''));
-					$username = $this->db->sql_escape($this->request->variable('userName',''));
-					$statName = $this->db->sql_escape($this->request->variable('statName',''));
+					$statReason		= $this->db->sql_escape($this->request->variable('statReasoning',''));
+					if($statReason == ''){
+						$statReason = 'No reason provided.';
+					}
 					
-					$sql = "SELECT value FROM $this->userStats WHERE statId = $statId AND userId = $userId";
+					$post_vars_array = $this->request->variable_names(\phpbb\request\request_interface::POST); 
+
+					$workingArray = array();
+					foreach($post_vars_array as $post){
+						$workingArray[$post] = $this->db->sql_escape($this->request->variable($post,''));
+					}
+					
+					$sql = "SELECT $this->statSetup.id FROM $this->statSetup";
 					$result = $this->db->sql_query($sql);
-					$oldStatValue = $this->db->sql_fetchrowset($result);
+					$numberOfIds = $this->db->sql_fetchrowset($result);
 					$this->db->sql_freeresult($result);
 					
-					$oldStatValue = $oldStatValue[0]['value'];
+					$groupingArray = array();
+					foreach($numberOfIds as $id){
+						$groupingArray[] = GetPrefixedItemsFromArray($workingArray, $id['id']);
+					}
+					$i = 1;
+					foreach($groupingArray as $array){
+						$statIdKey		= $i.'_statId';
+						$statValueKey	= $i.'_statValue';
+						$statDisplayKey	= $i.'_statDisplay';
+						$statNameKey	= $i.'_statName';
+						$statId			= (int) $this->db->sql_escape($array[$statIdKey]);
+						$newStatValue	= (int) $this->db->sql_escape($array[$statValueKey]);
+						$statDisplay	= (int) $this->db->sql_escape($array[$statDisplayKey]);
+						$statName		= $this->db->sql_escape($array[$statNameKey]);
+						
+						$sql = "SELECT $this->userStats.value FROM $this->userStats WHERE statId = $statId AND userId = $userId";
+						$result = $this->db->sql_query($sql);
+						$oldStatValue = $this->db->sql_fetchrowset($result);
+						$this->db->sql_freeresult($result);
+						$oldStatValue = $oldStatValue[0]['value'];
+						
+						$sql = "UPDATE $this->userStats SET value = $newStatValue, display = $statDisplay WHERE statId = $statId AND userId = $userId";
+						$result = $this->db->sql_query($sql);
+						$this->db->sql_freeresult($result);
+						
+						$statsEdited	= $this->language->lang('RPGSTATS_STAT_EDITED');
+						$colon			= $this->language->lang('COLON');
+						$fromValue		= $this->language->lang('FROM_VALUE');
+						$toValue		= $this->language->lang('TO_VALUE');
+						$onUser			= $this->language->lang('ON_USER');
+						$reasoning		= $this->language->lang('REASONING');
+						
+						$logString = "$statsEdited$colon $statName, $fromValue$colon $oldStatValue, $toValue$colon $newStatValue $onUser$colon <a href='./memberlist.php?mode=viewprofile&u=$userId'>$username</a>. $reasoning$colon $statReason";
 					
-					$sql = "UPDATE $this->userStats SET value = $newStatValue WHERE statId = $statId AND userId = $userId";
-					$result = $this->db->sql_query($sql);
-					$this->db->sql_freeresult($result);
+						if($oldStatValue != $newStatValue){
+							$this->log->add('mod', $this->user->data['user_id'], $this->user->data['user_ip'], $logString);;
+						}
+						$i++;
+					}
 					
-					$statsEdited	= $this->language->lang('RPGSTATS_STAT_EDITED');
-					$colon			= $this->language->lang('COLON');
-					$fromValue		= $this->language->lang('FROM_VALUE');
-					$toValue		= $this->language->lang('TO_VALUE');
-					$onUser			= $this->language->lang('ON_USER');
-					
-					$logString = "$statsEdited$colon $statName, $fromValue$colon $oldStatValue, $toValue$colon $newStatValue $onUser$colon <a href='./memberlist.php?mode=viewprofile&u=$userId'>$username</a>";
-					
-					$this->log->add('mod', $this->user->data['user_id'], $this->user->data['user_ip'], $logString);
 					trigger_error($this->language->lang('MCP_STATS_EDITED').'<br/><br/><a href="javascript:void;" onclick="window.history.go(-1)">Go back</a>');
 				}
 			}

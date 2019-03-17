@@ -40,6 +40,7 @@ fieldset.rpgstats_fieldset{
 	display: grid;
 	grid-column-gap: 5px;
 	grid-template-columns: auto auto auto;
+	margin-bottom:10px;
 }
 @media screen and (max-width: 1280px) {
   .grid-container {
@@ -56,51 +57,45 @@ fieldset.rpgstats_fieldset{
 </style>
 <div class="panel">
 	<div class="inner">
-		<div class="grid-container">
-		{% for rpgstats in loops.rpgstats %}
-			{% if not U_ACP and not rpgstats.STAT_SECRET == 1 %}
-			<div class="grid-item">
-				<form id="rpgstats_mcp_update_stats" method="post" action="{{ U_ACTION }}">
-				<fieldset class="rpgstats_fieldset">
-					<legend>{{ rpgstats.STAT_NAME }}</legend>
-					<dl>
-						<input type="hidden" value="{{ rpgstats.STAT_ID }}" name="statId" />
-						<input type="hidden" value="{{ U_ID }}" name="userId" />
-						<input type="hidden" value="{{ U_NAME }}" name="userName" />
-						<input type="hidden" value="{{ rpgstats.STAT_NAME }}" name="statName" />
-						
-						<dt><label for="{{ rpgstats.STAT_ID }}">{{ lang('RPGSTATS_VALUE') }}</label></dt>
-						<dd><input type="text" value="{{ rpgstats.STAT_VALUE }}" name="newStatValue" /></dd>
-						
-						<input class="button1" type="submit" id="updateStat" name="updateStat" value="{{ lang('RPGSTATS_UPDATE_STAT') }}" />
-						{{ S_FORM_TOKEN }}
-					</dl>
-				</fieldset>
-				</form>
+		<form id="rpgstats_mcp_update_stats" method="post" action="{{ U_ACTION }}">
+			<div class="grid-container">
+			{% for rpgstats in loops.rpgstats %}
+				{% if not U_ACP and not rpgstats.STAT_SECRET == 1 %}
+				<div class="grid-item">
+					<fieldset class="rpgstats_fieldset">
+						<legend>{{ rpgstats.STAT_NAME }}</legend>
+						<dl>
+							<input type="hidden" value="{{ rpgstats.STAT_ID }}" name="{{ rpgstats.STAT_ID }}_statId" />
+							<input type="hidden" value="{{ rpgstats.STAT_NAME }}" name="{{ rpgstats.STAT_ID }}_statName" />
+
+							<dt><label for="{{ rpgstats.STAT_ID }}_statValue">{{ lang('RPGSTATS_VALUE') }}</label></dt>
+							<dd><input type="text" value="{{ rpgstats.STAT_VALUE }}" name="{{ rpgstats.STAT_ID }}_statValue" /></dd>
+						</dl>
+					</fieldset>
+				</div>
+				{% elseif U_ACP %}
+				<div class="grid-item">
+					<fieldset class="rpgstats_fieldset">
+						<legend>{{ rpgstats.STAT_NAME }}</legend>
+						<dl>
+							<input type="hidden" value="{{ rpgstats.STAT_ID }}" name="{{ rpgstats.STAT_ID }}_statId" />
+							<input type="hidden" value="{{ rpgstats.STAT_NAME }}" name="{{ rpgstats.STAT_ID }}_statName" />
+
+							<dt><label for="{{ rpgstats.STAT_ID }}_statValue">{{ lang('RPGSTATS_VALUE') }}</label></dt>
+							<dd><input type="text" value="{{ rpgstats.STAT_VALUE }}" name="{{ rpgstats.STAT_ID }}_statValue" /></dd>
+						</dl>
+					</fieldset>
+				</div>
+				{% endif %}
+			{% endfor %}
 			</div>
-			{% elseif U_ACP %}
-			<div class="grid-item">
-				<form id="rpgstats_mcp_update_stats" method="post" action="{{ U_ACTION }}">
-				<fieldset class="rpgstats_fieldset">
-					<legend>{{ rpgstats.STAT_NAME }}</legend>
-					<dl>
-						<input type="hidden" value="{{ rpgstats.STAT_ID }}" name="statId" />
-						<input type="hidden" value="{{ U_ID }}" name="userId" />
-						<input type="hidden" value="{{ U_NAME }}" name="userName" />
-						<input type="hidden" value="{{ rpgstats.STAT_NAME }}" name="statName" />
-						
-						<dt><label for="{{ rpgstats.STAT_ID }}">{{ lang('RPGSTATS_VALUE') }}</label></dt>
-						<dd><input type="text" value="{{ rpgstats.STAT_VALUE }}" name="newStatValue" /></dd>
-						
-						<input class="button1" type="submit" id="updateStat" name="updateStat" value="{{ lang('RPGSTATS_UPDATE_STAT') }}" />
-						{{ S_FORM_TOKEN }}
-					</dl>
-				</fieldset>
-				</form>
-			</div>
-			{% endif %}
-		{% endfor %}
-		</div>
+			<p>{{ lang('RPGSTATS_REASON_EXPLAIN') }}{{ lang('COLON') }}</p>
+			<textarea name="statReasoning" id="statReasoning" style="width:100%; height: 100px;"></textarea>
+			{{ S_FORM_TOKEN }}
+			<input type="hidden" value="{{ U_ID }}" name="userId" />
+			<input type="hidden" value="{{ U_NAME }}" name="userName" />
+			<input class="button1" type="submit" id="updateStat" name="updateStat" value="{{ lang('RPGSTATS_UPDATE_STAT') }}" />
+		</form>
 	</div>
 </div>
 {% endif %}

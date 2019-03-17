@@ -70,6 +70,8 @@ $lang = array_merge($lang, array(
 	'FROM_VALUE'						=> 'from value',
 	'TO_VALUE'							=> 'to value',
 	'ON_USER'							=> 'on user',
+	'REASONING'							=> 'Reasoning for stat addition',
+	'RPGSTATS_REASON_EXPLAIN'			=> 'Please enter the reason for the stats granted into this text field',
 	
 	'RPGSTATS_GREALLOCATION_EXPLAIN'	=> 'Clicking this button will give every user on your forum a stat reallocation credit. They can use this credit to freely reallocate their stats as they so desire.',
 ));
