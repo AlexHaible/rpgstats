@@ -39,22 +39,27 @@
 		{% if (A_VIS_SETTING == 1 and (A_VIS_LEVEL == 1 or A_VIS_LEVEL == 3 or A_VIS_LEVEL == 4)) or (U_USER_ID == U_VIEWER_ID) or (U_ACP) or (U_CAN_EDIT) %}
 		<div class="grid-container">
 		{% for rpgstats in loops.rpgstats %}
-			{% if not U_ACP and not U_CAN_EDIT and rpgstats.STAT_SECRET == 0 and not A_VIS_LEVEL == 4 %}
+			{% if not (U_ACP) and not (U_CAN_EDIT) and (rpgstats.STAT_SECRET == 0) and not (A_VIS_LEVEL == 4) %}
 			<div class="grid-item">
 				<div class="stat-name">{{ rpgstats.STAT_NAME }}</div>
 				<div class="stat-value">{{ rpgstats.STAT_VALUE }}</div>
 			</div>
-			{% elseif not U_ACP and not U_CAN_EDIT and rpgstats.STAT_SECRET == 0 and (A_VIS_SETTING == 1 and A_VIS_LEVEL == 4) and (rpgstats.STAT_VISIBILITY == 1 or rpgstats.STAT_VISIBILITY == 3)%}
+			{% elseif not (U_ACP) and not (U_CAN_EDIT) and (rpgstats.STAT_SECRET == 0) and (A_VIS_LEVEL == 4) and (rpgstats.STAT_VISIBILITY == 1 or rpgstats.STAT_VISIBILITY == 3)%}
 			<div class="grid-item">
 				<div class="stat-name">{{ rpgstats.STAT_NAME }}</div>
 				<div class="stat-value">{{ rpgstats.STAT_VALUE }}</div>
 			</div>
-			{% elseif U_CAN_EDIT and rpgstats.STAT_SECRET == 0 %}
+			{% elseif not (U_ACP) and not (U_CAN_EDIT) and (rpgstats.STAT_SECRET == 0) %}
 			<div class="grid-item">
 				<div class="stat-name">{{ rpgstats.STAT_NAME }}</div>
 				<div class="stat-value">{{ rpgstats.STAT_VALUE }}</div>
 			</div>
-			{% elseif U_ACP %}
+			{% elseif (U_CAN_EDIT) and (rpgstats.STAT_SECRET) == 0 %}
+			<div class="grid-item">
+				<div class="stat-name">{{ rpgstats.STAT_NAME }}</div>
+				<div class="stat-value">{{ rpgstats.STAT_VALUE }}</div>
+			</div>
+			{% elseif (U_ACP) %}
 			<div class="grid-item">
 				<div class="stat-name">{{ rpgstats.STAT_NAME }}</div>
 				<div class="stat-value">{{ rpgstats.STAT_VALUE }}</div>
@@ -65,17 +70,17 @@
 		{% elseif A_VIS_SETTING == 0 %}
 		<div class="grid-container">
 		{% for rpgstats in loops.rpgstats %}
-			{% if not (U_ACP) and not (U_CAN_EDIT) and rpgstats.STAT_SECRET == 0 and (rpgstats.STAT_VISIBILITY == 1 or rpgstats.STAT_VISIBILITY == 3) %}
+			{% if not (U_ACP) and not (U_CAN_EDIT) and (rpgstats.STAT_SECRET == 0) and (rpgstats.STAT_VISIBILITY == 1 or rpgstats.STAT_VISIBILITY == 3) %}
 			<div class="grid-item bg1">
 				<div class="stat-name">{{ rpgstats.STAT_NAME }}</div>
 				<div class="stat-value">{{ rpgstats.STAT_VALUE }}</div>
 			</div>
-			{% elseif U_CAN_EDIT and rpgstats.STAT_SECRET == 0 %}
+			{% elseif (U_CAN_EDIT) and (rpgstats.STAT_SECRET == 0) %}
 			<div class="grid-item">
 				<div class="stat-name">{{ rpgstats.STAT_NAME }}</div>
 				<div class="stat-value">{{ rpgstats.STAT_VALUE }}</div>
 			</div>
-			{% elseif U_ACP %}
+			{% elseif (U_ACP) %}
 			<div class="grid-item">
 				<div class="stat-name">{{ rpgstats.STAT_NAME }}</div>
 				<div class="stat-value">{{ rpgstats.STAT_VALUE }}</div>

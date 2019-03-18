@@ -228,8 +228,8 @@ class main_module
 				$i++;
 			}
 			
-			$biggestMaxValue = max($listOfMinMax['max']);
-			$biggestMinValue = max($listOfMinMax['min']);
+			(isset($listOfMinMax['max'][0]) ? $biggestMaxValue = max($listOfMinMax['max']) : $biggestMaxValue = '');
+			(isset($listOfMinMax['min'][0]) ? $biggestMinValue = max($listOfMinMax['min']) : $biggestMinValue = '');
 			
 			$this->template->assign_vars(array(
 				'U_ID'					=> $userId,
