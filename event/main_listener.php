@@ -110,12 +110,12 @@ class main_listener implements EventSubscriberInterface
 	public function handleDatabaseAdditions($event)
 	{
 		$userId = $event['user_id'];
-		$sql = 'SELECT id, defaultValue, display, secret FROM ' . $this->stat_setup;
+		$sql = 'SELECT id, defaultValue, display FROM ' . $this->stat_setup;
 		$result = $this->db->sql_query($sql);
 		$values = $this->db->sql_fetchrowset($result);
 		$this->db->sql_freeresult($result);
 		foreach($values as $data){
-			$sql = "INSERT INTO " . $this->user_stats . " (userId, statId, value, display, secret) VALUES ('".$userId."','".$data['id']."','".$data['defaultValue']."','".$data['display']."','".$data['secret']."')";
+			$sql = "INSERT INTO " . $this->user_stats . " (userId, statId, value, display) VALUES ('".$userId."','".$data['id']."','".$data['defaultValue']."','".$data['display']."')";
 			$result = $this->db->sql_query($sql);
 			$this->db->sql_freeresult($result);
 		}

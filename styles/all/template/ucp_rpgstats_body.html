@@ -18,6 +18,9 @@ fieldset.rpgstats_fieldset{
 dd input, dd select{
 	width:100%;
 }
+dt {
+	clear:left;
+}
 .grid-container{
 	display: grid;
 	grid-column-gap: 5px;
@@ -75,32 +78,34 @@ dd input, dd select{
 		<form id="rpgstats_ucp_update_stats" method="post" action="{{ U_ACTION }}">
 			<div class="grid-container">
 				{% for rpgstats in loops.rpgstats %}
-					{% if not U_ACP and not rpgstats.STAT_SECRET == 1 %}
-						<div class="grid-item {% if rpgstats.STAT_ID == 1 %}unallocated{% endif %}" {% if rpgstats.STAT_ID == 2 %}style="display:none;"{% endif %}>
-							<fieldset class="rpgstats_fieldset">
-								<legend>{{ rpgstats.STAT_NAME }}</legend>
-								<dl>
-									<input type="hidden" value="{{ rpgstats.STAT_ID }}" name="{{ rpgstats.STAT_ID }}_statId" />
-									<input type="hidden" value="{{ rpgstats.STAT_NAME }}" name="{{ rpgstats.STAT_ID }}_statName" />
-									<input type="hidden" value="{{ rpgstats.STAT_MIN }}" name="statMin" />
-									<input type="hidden" value="{{ rpgstats.STAT_MAX }}" name="statMax" />
-									<dt>{% if rpgstats.STAT_ID == 1 %}{{ lang('RPGSTATS_POINTS_REMAINING') }}{{ lang('COLON') }}{% else %}{{ lang('RPGSTATS_VALUE') }}{% endif %}</dt>
-									<dd class="statValueContainer" style="text-align:center;">
-										<span class="{{ rpgstats.STAT_ID }}_statValue">{{ rpgstats.STAT_VALUE }}</span>
-										<input type="hidden" value="{{ rpgstats.STAT_VALUE }}" name="{{ rpgstats.STAT_ID }}_statValue" />
-									</dd>
-									<dt>{{ lang('RPGSTATS_DISPLAY') }}</dt>
-									<dd>
-										<select name="{{ rpgstats.STAT_ID }}_statDisplay" class="setDisplay">
-											<option value="0" {% if rpgstats.STAT_DISPLAY == 0 %}selected{% endif %}>{{ lang('RPGSTATS_DISPLAY_HIDDEN') }}</option>
-											<option value="1" {% if rpgstats.STAT_DISPLAY == 1 %}selected{% endif %}>{{ lang('RPGSTATS_DISPLAY_PROFILE') }}</option>
-											<option value="2" {% if rpgstats.STAT_DISPLAY == 2 %}selected{% endif %}>{{ lang('RPGSTATS_DISPLAY_AVATAR') }}</option>
-											<option value="3" {% if rpgstats.STAT_DISPLAY == 3 %}selected{% endif %}>{{ lang('RPGSTATS_DISPLAY_BOTH') }}</option>
-										</select>
-									</dd>
-								</dl>
-							</fieldset>
-						</div>
+					{% if not U_ACP %}
+						{% if not rpgstats.STAT_SECRET == 1 %}
+							<div class="grid-item {% if rpgstats.STAT_ID == 1 %}unallocated{% endif %}" {% if rpgstats.STAT_ID == 2 %}style="display:none;"{% endif %}>
+								<fieldset class="rpgstats_fieldset">
+									<legend>{{ rpgstats.STAT_NAME }}</legend>
+									<dl>
+										<input type="hidden" value="{{ rpgstats.STAT_ID }}" name="{{ rpgstats.STAT_ID }}_statId" />
+										<input type="hidden" value="{{ rpgstats.STAT_NAME }}" name="{{ rpgstats.STAT_ID }}_statName" />
+										<input type="hidden" value="{{ rpgstats.STAT_MIN }}" name="statMin" />
+										<input type="hidden" value="{{ rpgstats.STAT_MAX }}" name="statMax" />
+										<dt>{% if rpgstats.STAT_ID == 1 %}{{ lang('RPGSTATS_POINTS_REMAINING') }}{{ lang('COLON') }}{% else %}{{ lang('RPGSTATS_VALUE') }}{% endif %}</dt>
+										<dd class="statValueContainer" style="text-align:center;">
+											<span class="{{ rpgstats.STAT_ID }}_statValue">{{ rpgstats.STAT_VALUE }}</span>
+											<input type="hidden" value="{{ rpgstats.STAT_VALUE }}" name="{{ rpgstats.STAT_ID }}_statValue" />
+										</dd>
+										<dt>{{ lang('RPGSTATS_DISPLAY') }}</dt>
+										<dd>
+											<select name="{{ rpgstats.STAT_ID }}_statDisplay" class="setDisplay">
+												<option value="0" {% if rpgstats.STAT_DISPLAY == 0 %}selected{% endif %}>{{ lang('RPGSTATS_DISPLAY_HIDDEN') }}</option>
+												<option value="1" {% if rpgstats.STAT_DISPLAY == 1 %}selected{% endif %}>{{ lang('RPGSTATS_DISPLAY_PROFILE') }}</option>
+												<option value="2" {% if rpgstats.STAT_DISPLAY == 2 %}selected{% endif %}>{{ lang('RPGSTATS_DISPLAY_AVATAR') }}</option>
+												<option value="3" {% if rpgstats.STAT_DISPLAY == 3 %}selected{% endif %}>{{ lang('RPGSTATS_DISPLAY_BOTH') }}</option>
+											</select>
+										</dd>
+									</dl>
+								</fieldset>
+							</div>
+						{% endif %}
 					{% elseif U_ACP %}
 						<div class="grid-item {% if rpgstats.STAT_ID == 1 %}unallocated{% endif %}" {% if rpgstats.STAT_ID == 2 %}style="display:none;"{% endif %}>
 							<fieldset class="rpgstats_fieldset">
@@ -180,6 +185,13 @@ $(document).ready(function(){
 		});
 		i++;
 	}
+	$('.grid-item > fieldset > dl').each(function(){
+		if(!$(this).children('input[name=1_statId]').length && !$(this).children('input[name=2_statId]').length && !$(this).children('input[name=3_statId]').length) {
+			var statMins = $(this).children('input[name=statMin]').val();
+			var statMaxs = $(this).children('input[name=statMax]').val();
+			$(this).append('<div style="clear:left;"><dt>Stat Min:</dt><dd>'+statMins+'</dd><dt>Stat Max:</dt><dd>'+statMaxs+'</dd></div>');
+		}
+	});
 	$('.statValueContainer').on('click','button',function(){
 		event.preventDefault();
 		var unallocatedPoints = $('span.1_statValue');
@@ -194,6 +206,8 @@ $(document).ready(function(){
 		}
 		if(maxOverride == ''){
 			statMax = ($(this).parent().siblings('input[name=statMax]').val() == 0 ? 1000000000 : $(this).parent().siblings('input[name=statMax]').val());
+		} else if(parseInt(maxOverride, 10) == 0) {
+			statMax = 1000000000;
 		} else {
 			statMax = parseInt(maxOverride, 10);
 		}
@@ -248,7 +262,9 @@ $(document).ready(function(){
 				break;
 		}
 	});
-	$('#rpgstats_ucp_update_stats').prepend('<p style="text-align:center;">Minimum Stat Value: '+parseInt(minOverride, 10)+' | Maximum Stat Value: '+parseInt(maxOverride, 10)+'</p>');
+	if(minOverride != '' || maxOverride != ''){
+		$('#rpgstats_ucp_update_stats').prepend('<p style="text-align:center;">Minimum Stat Value: '+(minOverride.length ? minOverride : 0)+' | Maximum Stat Value: '+(maxOverride.length ? maxOverride : 0)+'</p>');
+	}
 });
 </script>
 
