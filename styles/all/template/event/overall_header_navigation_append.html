@@ -1,7 +1,0 @@
-{% if S_REGISTERED_USER %}
-<li data-last-responsive="true">
-	<a href="{% if SHOP_LINK %}{{ SHOP_LINK }}{% else %}#{% endif %}" rel="money" title="{{ T_MONEY_NAME }}" role="menuitem">
-		<i class="icon fa-money fa-fw" aria-hidden="true"></i><span>{{ T_MONEY_NAME }} - {{ T_MONEY_AMOUNT }}</span>
-	</a>
-</li>
-{% endif %}
