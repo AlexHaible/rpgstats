@@ -1,38 +1,38 @@
-{% if not INCLUDED_RPGSTATSCSS %}
-	{% INCLUDECSS '@sauravisus_rpgstats/style.css' %}
-	{% DEFINE INCLUDED_RPGSTATSCSS = true %}
-{% endif %}
-<dd class="rpgstats_belowAvatar_container">
-	{% if S_REGISTERED_USER %}
-		{% if U_ACP or U_CAN_EDIT %}
-			[ <a href="./mcp.php?i=-sauravisus-rpgstats-mcp-main_module&mode=settings&u={{ postrow.POSTER_ID }}">{{ lang('RPGSTATS_GO_EDIT') }}</a> ]
-		{% endif %}
-		{% if (A_VIS_SETTING == 1 and (A_VIS_LEVEL == 1 or A_VIS_LEVEL == 2 or A_VIS_LEVEL == 4)) or (postrow.POSTER_ID == U_VIEWER_ID) or (U_ACP) or (U_CAN_EDIT) %}
-			<div class="grid-container">
-				{% for rpgstats in postrow.RPG_STATS %}
-					{% if not (U_ACP) and not (U_CAN_EDIT) and (rpgstats.STAT_SECRET == 0) and not (A_VIS_LEVEL == 4) %}
-						<div class="grid-item">{{ rpgstats.STAT_NAME }}{{ lang('COLON') }} {{ rpgstats.STAT_VALUE }}</div>
-					{% elseif not (U_ACP) and not (U_CAN_EDIT) and (rpgstats.STAT_SECRET == 0) and (A_VIS_LEVEL == 4) and (rpgstats.STAT_VISIBILITY == 2 or rpgstats.STAT_VISIBILITY == 3) %}
-						<div class="grid-item">{{ rpgstats.STAT_NAME }}{{ lang('COLON') }} {{ rpgstats.STAT_VALUE }}</div>
-					{% elseif (U_CAN_EDIT) and (rpgstats.STAT_SECRET == 0) %}
-						<div class="grid-item">{{ rpgstats.STAT_NAME }}{{ lang('COLON') }} {{ rpgstats.STAT_VALUE }}</div>
-					{% elseif (U_ACP) %}
-						<div class="grid-item">{{ rpgstats.STAT_NAME }}{{ lang('COLON') }} {{ rpgstats.STAT_VALUE }}</div>
-					{% endif %}
-				{% endfor %}
-			</div>
-		{% elseif A_VIS_SETTING == 0 %}
-			<div class="grid-container">
-				{% for rpgstats in postrow.RPG_STATS %}
-					{% if not (U_ACP) and not (U_CAN_EDIT) and (rpgstats.STAT_SECRET == 0) and (rpgstats.STAT_VISIBILITY == 2 or rpgstats.STAT_VISIBILITY == 3) %}
-						<div class="grid-item">{{ rpgstats.STAT_NAME }}{{ lang('COLON') }} {{ rpgstats.STAT_VALUE }}</div>
-					{% elseif (U_CAN_EDIT) and (rpgstats.STAT_SECRET == 0) %}
-						<div class="grid-item">{{ rpgstats.STAT_NAME }}{{ lang('COLON') }} {{ rpgstats.STAT_VALUE }}</div>
-					{% elseif (U_ACP) %}
-						<div class="grid-item">{{ rpgstats.STAT_NAME }}{{ lang('COLON') }} {{ rpgstats.STAT_VALUE }}</div>
-					{% endif %}
-				{% endfor %}
-			</div>
-		{% endif %}
-	{% endif %}
+{% if INCLUDED_RPGSTATSCSS == false %}
+	{% INCLUDECSS '@sauravisus_rpgstats/style.css' %}
+	{% DEFINE INCLUDED_RPGSTATSCSS = true %}
+{% endif %}
+<dd class="rpgstats_belowAvatar_container">
+	{% if S_REGISTERED_USER %}
+		{% if U_ACP or U_CAN_EDIT %}
+			[ <a href="./mcp.php?i=-sauravisus-rpgstats-mcp-main_module&mode=settings&u={{ postrow.POSTER_ID }}">{{ lang('RPGSTATS_GO_EDIT') }}</a> ]
+		{% endif %}
+		{% if (A_VIS_SETTING == 1 and (A_VIS_LEVEL == 1 or A_VIS_LEVEL == 2 or A_VIS_LEVEL == 4)) or (postrow.POSTER_ID == U_VIEWER_ID) or (U_ACP) or (U_CAN_EDIT) %}
+			<div class="grid-container">
+				{% for rpgstats in postrow.RPG_STATS %}
+					{% if not (U_ACP) and not (U_CAN_EDIT) and (rpgstats.STAT_SECRET == 0) and not (A_VIS_LEVEL == 4) %}
+						<div class="grid-item">{{ rpgstats.STAT_NAME }}{{ lang('COLON') }} {{ rpgstats.STAT_VALUE }}</div>
+					{% elseif not (U_ACP) and not (U_CAN_EDIT) and (rpgstats.STAT_SECRET == 0) and (A_VIS_LEVEL == 4) and (rpgstats.STAT_VISIBILITY == 2 or rpgstats.STAT_VISIBILITY == 3) %}
+						<div class="grid-item">{{ rpgstats.STAT_NAME }}{{ lang('COLON') }} {{ rpgstats.STAT_VALUE }}</div>
+					{% elseif (U_CAN_EDIT) and (rpgstats.STAT_SECRET == 0) %}
+						<div class="grid-item">{{ rpgstats.STAT_NAME }}{{ lang('COLON') }} {{ rpgstats.STAT_VALUE }}</div>
+					{% elseif (U_ACP) %}
+						<div class="grid-item">{{ rpgstats.STAT_NAME }}{{ lang('COLON') }} {{ rpgstats.STAT_VALUE }}</div>
+					{% endif %}
+				{% endfor %}
+			</div>
+		{% elseif A_VIS_SETTING == 0 %}
+			<div class="grid-container">
+				{% for rpgstats in postrow.RPG_STATS %}
+					{% if not (U_ACP) and not (U_CAN_EDIT) and (rpgstats.STAT_SECRET == 0) and (rpgstats.STAT_VISIBILITY == 2 or rpgstats.STAT_VISIBILITY == 3) %}
+						<div class="grid-item">{{ rpgstats.STAT_NAME }}{{ lang('COLON') }} {{ rpgstats.STAT_VALUE }}</div>
+					{% elseif (U_CAN_EDIT) and (rpgstats.STAT_SECRET == 0) %}
+						<div class="grid-item">{{ rpgstats.STAT_NAME }}{{ lang('COLON') }} {{ rpgstats.STAT_VALUE }}</div>
+					{% elseif (U_ACP) %}
+						<div class="grid-item">{{ rpgstats.STAT_NAME }}{{ lang('COLON') }} {{ rpgstats.STAT_VALUE }}</div>
+					{% endif %}
+				{% endfor %}
+			</div>
+		{% endif %}
+	{% endif %}
 </dd>
