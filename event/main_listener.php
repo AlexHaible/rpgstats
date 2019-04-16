@@ -159,6 +159,7 @@ class main_listener implements EventSubscriberInterface
 			'U_CAN_EDIT'			=> ($this->auth->acl_get('m_chg_stats')) ? true : false,
 			'A_VIS_SETTING'			=> $adminVisibilitySetting,
 			'A_VIS_LEVEL'			=> $adminVisibilityLevel,
+			'INCLUDED_RPGSTATSCSS'		=> false,
 		));
 	}
 	
